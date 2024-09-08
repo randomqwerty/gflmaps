@@ -24,6 +24,7 @@ var Enemy_charater_type, Enemy_character_type_by_id;
 var Ally_team;
 var Gun, Gun_by_id;
 var Gun_in_ally;
+var Sangvis;
 var Sangvis_in_ally;
 var equip_in_ally_info;
 var trial_info;
@@ -386,6 +387,7 @@ const loadData = async () => {
       Gun_by_id = Object.fromEntries(result.map((gun) => [gun.id, gun]));
     }),
     "Gun_in_ally": loadJsonFile(`./data/${config.dataSource}/Gun_in_ally.json`).then((result) => Gun_in_ally = result),
+    "Sangvis": loadJsonFile(`./data/${config.dataSource}/Sangvis.json`).then((result) => Sangvis = result),
     "Sangvis_in_ally": loadJsonFile(`./data/${config.dataSource}/Sangvis_in_ally.json`).then((result) => Sangvis_in_ally = result),
     "equip_in_ally_info": loadJsonFile(`./data/${config.dataSource}/equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
     "trial_info": loadJsonFile(`./data/${config.dataSource}/trial_info.json`).then((result) => trial_info = result["trial_info"]),
