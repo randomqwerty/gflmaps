@@ -127,6 +127,8 @@
   "mission_info_hoc_excluded": "* = G&K+Coalition, doesn't count HOC",
   "mission_info_advantaged_dolls": "Advantaged Dolls",
   "mission_info_no_advantaged_dolls": "None",
+  "mission_info_level_penalty": "Level Penalty",
+  "mission_info_base_exp": "Base Exp",
 
   "building_location": "Location",
   "building_id": "ID",

@@ -378,6 +378,10 @@ const loadData = async () => {
       Building = result;
       BuildingMap = Object.fromEntries(result.map((building) => [building.id, building]));
     }),
+    "Auto_mission": loadStcFile(`auto_mission.json`).then((result) => {
+      Auto_mission = result;
+      Auto_mission_map = Object.fromEntries(result.map((auto_mission) => [auto_mission.mission_id, auto_mission]));
+    }),
     "Mission": loadStcFile(`mission.json`).then((result) => {
       Mission = result;
       Mission_map = Object.fromEntries(result.map((mission) => [mission.id, mission]));
@@ -930,6 +934,7 @@ function updatemap() {
   }
 
   const mission_info = Mission_map[Number(mission)];
+  const auto_mission_info = Auto_mission_map[Number(mission)];
   if (mission_info) {
     Object.keys(Object.fromEntries(mission_info.map_res_name.split(';').map((bgName) => [bgName])))
       .forEach((bgName) => {
@@ -945,6 +950,8 @@ function updatemap() {
       advantagedDollsNames = mission_info.adaptive_gun.split(",").map((gun_id) => getGunName(gun_id));
     }
     let advantagedDolls = advantagedDollsNames.length > 0 ? advantagedDollsNames.join(", ") : UI_TEXT["mission_info_no_advantaged_dolls"];
+    let levelPenalty = auto_mission_info.expect_gun_level + 10;
+    let baseExperience = mission_info.exp_parameter * 10;
     let tableBody = "";
     let notes = [];
 
@@ -961,6 +968,8 @@ function updatemap() {
            <th>${UI_TEXT["mission_info_vehicle_limit"]}</th>
            <th>${UI_TEXT["mission_info_total_team_limit"]}</th>
            <th>${UI_TEXT["mission_info_advantaged_dolls"]}</th>
+           <th>${UI_TEXT["mission_info_level_penalty"]}</th>
+           <th>${UI_TEXT["mission_info_base_exp"]}</th>
          </tr></thead>
          <tbody>
            <tr>
@@ -973,6 +982,8 @@ function updatemap() {
              <td>N/A</td>
              <td>10*</td>
              <td>${advantagedDolls}</td>
+             <td>${levelPenalty}</td>
+             <td>${baseExperience}</td>
            </tr>
            <tr>
              <td>>= 350,000</td>
@@ -1017,6 +1028,8 @@ function updatemap() {
            <th>${UI_TEXT["mission_info_vehicle_limit"]}</th>
            <th>${UI_TEXT["mission_info_total_team_limit"]}</th>
            <th>${UI_TEXT["mission_info_advantaged_dolls"]}</th>
+           <th>${UI_TEXT["mission_info_level_penalty"]}</th>
+           <th>${UI_TEXT["mission_info_base_exp"]}</th>
          </tr></thead>
          <tbody><tr>
            <td>${mission_info.special_type > 0 ? UI_TEXT["mission_info_environment_night"] : UI_TEXT["mission_info_environment_day"]}</td>
@@ -1027,6 +1040,8 @@ function updatemap() {
            <td>${vehicleLimit}</td>
            <td>${totalTeamLimitDisplay}</td>
            <td>${advantagedDolls}</td>
+           <td>${levelPenalty}</td>
+           <td>${baseExperience}</td>
          </tr></tbody>`;
     }
     
