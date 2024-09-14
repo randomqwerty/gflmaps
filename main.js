@@ -2,7 +2,7 @@
 
 var config = {
   langCode: "en",
-  dataSource: "cn",
+  dataSource: "ch",
   shouldLoadChibis: true,
 };
 
@@ -41,7 +41,7 @@ var Gun_txt, Gun_cn_txt;
 var Sangvis_txt, Sangvis_cn_txt;
 var Team_ai_txt;
 var Mission_targettrain_enemy_txt, Mission_targettrain_enemy_cn_txt;
-var Special_spot_config_txt;
+var Special_spot_config_txt, Special_spot_config_cn_txt;
 
 var UI_TEXT = {};
 var INSTRUCTIONS = "";
@@ -134,30 +134,30 @@ const wellKnownEnemyCodes = new Set([
 //     when using dataSource=CN and langCode=EN.
 function trans() {
   for (i in Building) {
-    var namepos = Building_txt.indexOf(Building[i].name);
-    var namestr = namepos !== -1 ? Building_txt.slice(namepos + Building[i].name.length + 1, Building_txt.indexOf("\n", namepos) - 1).trim().replace("//c", UI_TEXT["comma"]) : null;
+	var namestr = Building_txt[Building[i].name] ? Building_txt[Building[i].name].trim().replace("//c", UI_TEXT["comma"]) : null;
+
     if (namestr && !namestr.match(/(?:don't|do not) translate/i)) {
       Building[i].name = namestr;
     } else {
-      const fallback_match = Building_cn_txt.match(`${Building[i].name},(.*)`);
+      const fallback_match = Building_cn_txt[Building[i]];
       Building[i].name = fallback_match ? `[${Building[i].code}] ${fallback_match[1]}` : `[${Building[i].code}]`;
-    }
+    };
   }
 
   for (i in Mission) {
-    var namepos = Mission_txt.indexOf(Mission[i].name);
-    var namestr = namepos !== -1 ? Mission_txt.slice(namepos + Mission[i].name.length + 1, Mission_txt.indexOf("\n", namepos)).trim().replace("//c", UI_TEXT["comma"]) : null;
+	var namestr = Mission_txt[Mission[i].name] ? Mission_txt[Mission[i].name].trim().replace("//c", UI_TEXT["comma"]) : null;
+
     if (namestr && !namestr.match(/(?:don't|do not) translate/i)) {
       Mission[i].name = namestr;
     } else {
-      const fallback_match = Mission_cn_txt.match(`${Mission[i].name},(.*)`);
+      const fallback_match = Mission_cn_txt[Mission[i]];
       Mission[i].name = fallback_match ? `[${Mission[i].name}] ${fallback_match[1]}` : `[${Mission[i].name}]`;
     }
   }
 
   for(i in Enemy_charater_type) {
-    var namepos = Enemy_charater_type_txt.indexOf(Enemy_charater_type[i].name);    
-    var namestr = namepos !== -1 ? Enemy_charater_type_txt.slice(namepos + Enemy_charater_type[i].name.length + 1, Enemy_charater_type_txt.indexOf("\n", namepos) - 1).trim().replace("//c", UI_TEXT["comma"]) : null;
+	var namestr = Enemy_charater_type_txt[Enemy_charater_type[i].name] ? Enemy_charater_type_txt[Enemy_charater_type[i].name].trim().replace("//c", UI_TEXT["comma"]) : null;
+
     if (namestr) {
       Enemy_charater_type[i].name = namestr;
       if (wellKnownEnemyCodes.has(Enemy_charater_type[i].code)) {
@@ -171,7 +171,7 @@ function trans() {
       }
     } else {
       let prefix = "";
-      const fallback_match = Enemy_charater_type_cn_txt.match(`${Enemy_charater_type[i].name},(.*)`);
+	  const fallback_match = Enemy_charater_type_cn_txt[Enemy_charater_type[i]];
       if (Enemy_charater_type[i].code) {
         // CHANGE FROM GFWIKI: When dataSource=CN and langCode=EN, for enemy characters without names,
         //     if they have a codename, then display the codename in square brackets.
@@ -184,8 +184,7 @@ function trans() {
   }
 
   for (i in Ally_team) {
-    var namepos = Ally_team_txt.indexOf(Ally_team[i].name);
-    var namestr = namepos !== -1 ? Ally_team_txt.slice(namepos + Ally_team[i].name.length + 1, Ally_team_txt.indexOf("\n", namepos) - 1).trim().replace("//c", UI_TEXT["comma"]) : null;
+	var namestr = Ally_team_txt[Ally_team[i].name] ? Ally_team_txt[Ally_team[i].name].trim().replace("//c", UI_TEXT["comma"]) : null;
     if (namestr) {
       Ally_team[i].name = namestr;
       Ally_team[i].controllableAlliedTeamName = namestr;
@@ -196,15 +195,14 @@ function trans() {
       //     part and display "[team-10000026]".
       const teamname_match = Ally_team[i].name.match(/team-\d+/);
       const prefix = teamname_match.length ? `[${teamname_match[0]}]` : `[${Ally_team[i].name}]`;
-      const fallback_match = Ally_team_cn_txt.match(`${Ally_team[i].name},(.*)`);
+      const fallback_match = Ally_team_cn_txt[Ally_team[i].name];
       Ally_team[i].name = fallback_match ? `${prefix} ${fallback_match[1]}` : prefix;
       Ally_team[i].controllableAlliedTeamName = fallback_match ? fallback_match[1] : prefix;
     }
   }
 
   for (i in Team_ai) {
-    var namepos = Team_ai_txt.indexOf(Team_ai[i].name);
-    var namestr = namepos !== -1 ? Team_ai_txt.slice(namepos + Team_ai[i].name.length + 1, Team_ai_txt.indexOf("\n", namepos) - 1).trim().replace("//c", UI_TEXT["comma"]) : null;
+	var namestr = Team_ai_txt[Team_ai[i].name] ? Team_ai_txt[Team_ai[i].name].trim().replace("//c", UI_TEXT["comma"]) : null;
     if (namestr) {
       Team_ai[i].name = namestr;
     } else {
@@ -213,17 +211,16 @@ function trans() {
   }
 
   for (i in Mission_targettrain_enemy) {
-    var namepos = Mission_targettrain_enemy_txt.indexOf(Mission_targettrain_enemy[i].name);
-    var namestr = namepos !== -1 ? Mission_targettrain_enemy_txt.slice(namepos + Mission_targettrain_enemy[i].name.length + 1, Mission_targettrain_enemy_txt.indexOf("\n", namepos) - 1).trim().replace("//c", UI_TEXT["comma"]) : null;
+	var namestr = Mission_targettrain_enemy_txt[Mission_targettrain_enemy[i].name] ? Mission_targettrain_enemy_txt[Mission_targettrain_enemy[i].name].trim().replace("//c", UI_TEXT["comma"]) : null;
     if (namestr) {
       Mission_targettrain_enemy[i].name = namestr;
     } else {
-      const fallback_match = Mission_targettrain_enemy_cn_txt.match(`${Mission_targettrain_enemy[i].name},(.*)`);
+      const fallback_match = Mission_targettrain_enemy_cn_txt[Mission_targettrain_enemy[i].name];
       Mission_targettrain_enemy[i].name = fallback_match ? `[${Mission_targettrain_enemy[i].name}] ${fallback_match[1]}` : `[${Mission_targettrain_enemy[i].name}]`;
     }
 
-    const desc_match = Mission_targettrain_enemy_txt.match(`${Mission_targettrain_enemy[i].des},(.*)`);
-    const desc_fallback_match = Mission_targettrain_enemy_cn_txt.match(`${Mission_targettrain_enemy[i].des},(.*)`);
+    const desc_match = Mission_targettrain_enemy_txt[Mission_targettrain_enemy[i].des];
+    const desc_fallback_match = Mission_targettrain_enemy_cn_txt[Mission_targettrain_enemy[i].des];
     Mission_targettrain_enemy[i].des = (desc_match || desc_fallback_match || ["", ""])[1].replace("//c", UI_TEXT["comma"]);
   }
 }
@@ -349,10 +346,14 @@ const loadChibi = (code, redrawFunc) => {
 const loadData = async () => {
   const loadTextFile = (url) => fetch(url).then((result) => result.text());
   const loadJsonFile = (url) => fetch(url).then((result) => result.json());
-
+  const loadStcFile = (file) => loadJsonFile(`https://raw.githubusercontent.com/randomqwerty/GFLData/main/${config.dataSource}/stc/${file}`);
+  const loadCatchFile = (file) => loadJsonFile(`https://raw.githubusercontent.com/randomqwerty/GFLData/main/${config.dataSource}/catchdata/${file}`);
+  const loadTextTable = (file) => loadJsonFile(`https://raw.githubusercontent.com/randomqwerty/GFLData/main/${config.langCode}/text/table/${file}`);
+  const loadCnTextTable = (file) => loadJsonFile(`https://raw.githubusercontent.com/randomqwerty/GFLData/main/ch/text/table/${file}`);
+  
   const loaders = {
-    "Spot": loadJsonFile(`./data/${config.dataSource}/Spot.json`).then((result) => Spot = result),
-    "Enemy_in_team": loadJsonFile(`./data/${config.dataSource}/Enemy_in_team.json`).then((result) => {
+    "Spot": loadStcFile(`spot.json`).then((result) => Spot = result),
+    "Enemy_in_team": loadStcFile(`enemy_in_team.json`).then((result) => {
       Enemy_in_team = result;
 
       Enemy_in_team_by_team_id = {};
@@ -363,34 +364,38 @@ const loadData = async () => {
         Enemy_in_team_by_team_id[row.enemy_team_id].push(row);
       });
     }),
-    "Enemy_standard_attribute": loadJsonFile(`./data/${config.dataSource}/Enemy_standard_attribute.json`).then((result) => Enemy_standard_attribute = result),
-    "Enemy_team": loadJsonFile(`./data/${config.dataSource}/Enemy_team.json`).then((result) => {
+    "Enemy_standard_attribute": loadStcFile(`enemy_standard_attribute.json`).then((result) => Enemy_standard_attribute = result),
+    "Enemy_team": loadStcFile(`enemy_team.json`).then((result) => {
       Enemy_team = result;
       Enemy_team_map = Object.fromEntries(result.map((enemyTeam) => [enemyTeam.id, enemyTeam]));
     }),
-    "Theater_area": loadJsonFile(`./data/${config.dataSource}/Theater_area.json`).then((result) => Theater_area = result),
-    "Building": loadJsonFile(`./data/${config.dataSource}/Building.json`).then((result) => {
+    "Equip": loadStcFile(`equip.json`).then((result) => {
+      Equip = result;
+      Equip_map = Object.fromEntries(result.map((equip) => [equip.id, equip]));
+    }),
+    "Theater_area": loadStcFile(`theater_area.json`).then((result) => Theater_area = result),
+    "Building": loadStcFile(`building.json`).then((result) => {
       Building = result;
       BuildingMap = Object.fromEntries(result.map((building) => [building.id, building]));
     }),
-    "Mission": loadJsonFile(`./data/${config.dataSource}/Mission.json`).then((result) => {
+    "Mission": loadStcFile(`mission.json`).then((result) => {
       Mission = result;
       Mission_map = Object.fromEntries(result.map((mission) => [mission.id, mission]));
     }),
-    "Enemy_character_type": loadJsonFile(`./data/${config.dataSource}/Enemy_character_type.json`).then((result) => {
+    "Enemy_character_type": loadStcFile(`enemy_character_type.json`).then((result) => {
       Enemy_charater_type = result;
       Enemy_character_type_by_id = Object.fromEntries(result.map((enemy) => [enemy.id, enemy]));
     }),
-    "Ally_team": loadJsonFile(`./data/${config.dataSource}/Ally_team.json`).then((result) => Ally_team = result),
-    "Gun": loadJsonFile(`./data/${config.dataSource}/Gun.json`).then((result) => {
+    "Ally_team": loadStcFile(`ally_team.json`).then((result) => Ally_team = result),
+    "Gun": loadStcFile(`gun.json`).then((result) => {
       Gun = result;
       Gun_by_id = Object.fromEntries(result.map((gun) => [gun.id, gun]));
     }),
-    "Gun_in_ally": loadJsonFile(`./data/${config.dataSource}/Gun_in_ally.json`).then((result) => Gun_in_ally = result),
-    "Sangvis": loadJsonFile(`./data/${config.dataSource}/Sangvis.json`).then((result) => Sangvis = result),
-    "Sangvis_in_ally": loadJsonFile(`./data/${config.dataSource}/Sangvis_in_ally.json`).then((result) => Sangvis_in_ally = result),
-    "equip_in_ally_info": loadJsonFile(`./data/${config.dataSource}/equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
-    "trial_info": loadJsonFile(`./data/${config.dataSource}/trial_info.json`).then((result) => trial_info = result["trial_info"]),
+    "Gun_in_ally": loadStcFile(`gun_in_ally.json`).then((result) => Gun_in_ally = result),
+    "Sangvis": loadStcFile(`sangvis.json`).then((result) => Sangvis = result),
+    "Sangvis_in_ally": loadStcFile(`sangvis_in_ally.json`).then((result) => Sangvis_in_ally = result),
+    "equip_in_ally_info": loadCatchFile(`equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
+    "trial_info": loadCatchFile(`trial_info.json`).then((result) => trial_info = result["trial_info"]),
     /*
     "ConstructibleThings": loadJsonFile(`./data/${config.dataSource}/Recommended_formula.json`).then((result) => {
       result.forEach((formula) => {
@@ -406,28 +411,29 @@ const loadData = async () => {
       };
     }),
     // */
-    "Team_ai": loadJsonFile(`./data/${config.dataSource}/Team_ai.json`).then((result) => Team_ai = result),
-    "Mission_targettrain_enemy": loadJsonFile(`./data/${config.dataSource}/Mission_targettrain_enemy.json`).then((result) => Mission_targettrain_enemy = result),
+    "Team_ai": loadStcFile(`team_ai.json`).then((result) => Team_ai = result),
+    "Mission_targettrain_enemy": loadStcFile(`mission_targettrain_enemy.json`).then((result) => Mission_targettrain_enemy = result),
     "UI_TEXT": loadJsonFile(`./text/${config.langCode}/ui_text.json`).then((result) => UI_TEXT = result),
 
-    "Building_txt": loadTextFile(`./text/${config.langCode}/building.txt`).then((result) => Building_txt = result),
-    "Building_cn_txt": loadTextFile(`./text/cn/building.txt`).then((result) => Building_cn_txt = result),
-    "Equip_txt": loadTextFile(`./text/${config.langCode}/equip.txt`).then((result) => Equip_txt = result),
-    "Equip_cn_txt": loadTextFile(`./text/cn/equip.txt`).then((result) => Equip_cn_txt = result),
-    "Gun_txt": loadTextFile(`./text/${config.langCode}/gun.txt`).then((result) => Gun_txt = result),
-    "Gun_cn_txt": loadTextFile(`./text/cn/gun.txt`).then((result) => Gun_cn_txt = result),
-    "Sangvis_txt": loadTextFile(`./text/${config.langCode}/sangvis.txt`).then((result) => Sangvis_txt = result),
-    "Sangvis_cn_txt": loadTextFile(`./text/cn/sangvis.txt`).then((result) => Sangvis_cn_txt = result),
-    "Mission_txt": loadTextFile(`./text/${config.langCode}/mission.txt`).then((result) => Mission_txt = result),
-    "Mission_cn_txt": loadTextFile(`./text/cn/mission.txt`).then((result) => Mission_cn_txt = result),
-    "Enemy_charater_type_txt": loadTextFile(`./text/${config.langCode}/enemy_character_type.txt`).then((result) => Enemy_charater_type_txt = result),
-    "Enemy_character_type_cn_txt": loadTextFile(`./text/cn/enemy_character_type.txt`).then((result) => Enemy_charater_type_cn_txt = result),
-    "Ally_team_txt": loadTextFile(`./text/${config.langCode}/ally_team.txt`).then((result) => Ally_team_txt = result),
-    "Ally_team_cn_txt": loadTextFile(`./text/cn/ally_team.txt`).then((result) => Ally_team_cn_txt = result),
-    "Team_ai_txt": loadTextFile(`./text/${config.langCode}/team_ai.txt`).then((result) => Team_ai_txt = result),
-    "Mission_targettrain_enemy_txt": loadTextFile(`./text/${config.langCode}/mission_targettrain_enemy.txt`).then((result) => Mission_targettrain_enemy_txt = result),
-    "Mission_targettrain_enemy_cn_txt": loadTextFile(`./text/cn/mission_targettrain_enemy.txt`).then((result) => Mission_targettrain_enemy_cn_txt = result),
-    "Special_spot_config_txt": loadTextFile(`./text/${config.langCode}/special_spot_config.txt`).then((result) => Special_spot_config_txt = result),
+    "Building_txt": loadTextTable(`building.json`).then((result) => Building_txt = result),
+    "Building_cn_txt": loadCnTextTable(`building.json`).then((result) => Building_cn_txt = result),
+    "Equip_txt": loadTextTable(`equip.json`).then((result) => Equip_txt = result),
+    "Equip_cn_txt": loadCnTextTable(`equip.json`).then((result) => Equip_cn_txt = result),
+    "Gun_txt": loadTextTable(`gun.json`).then((result) => Gun_txt = result),
+    "Gun_cn_txt": loadCnTextTable(`gun.json`).then((result) => Gun_cn_txt = result),
+    "Sangvis_txt": loadTextTable(`sangvis.json`).then((result) => Sangvis_txt = result),
+    "Sangvis_cn_txt": loadCnTextTable(`sangvis.json`).then((result) => Sangvis_cn_txt = result),
+    "Mission_txt": loadTextTable(`mission.json`).then((result) => Mission_txt = result),
+    "Mission_cn_txt": loadCnTextTable(`mission.json`).then((result) => Mission_cn_txt = result),
+    "Enemy_charater_type_txt": loadTextTable(`enemy_character_type.json`).then((result) => Enemy_charater_type_txt = result),
+    "Enemy_character_type_cn_txt": loadCnTextTable(`enemy_character_type.json`).then((result) => Enemy_charater_type_cn_txt = result),
+    "Ally_team_txt": loadTextTable(`ally_team.json`).then((result) => Ally_team_txt = result),
+    "Ally_team_cn_txt": loadCnTextTable(`ally_team.json`).then((result) => Ally_team_cn_txt = result),
+    "Team_ai_txt": loadTextTable(`team_ai.json`).then((result) => Team_ai_txt = result),
+    "Mission_targettrain_enemy_txt": loadTextTable(`mission_targettrain_enemy.json`).then((result) => Mission_targettrain_enemy_txt = result),
+    "Mission_targettrain_enemy_cn_txt": loadCnTextTable(`mission_targettrain_enemy.json`).then((result) => Mission_targettrain_enemy_cn_txt = result),
+    "Special_spot_config_txt": loadTextTable(`special_spot_config.json`).then((result) => Special_spot_config_txt = result),
+    "Special_spot_config_cn_txt": loadCnTextTable(`special_spot_config.json`).then((result) => Special_spot_config_cn_txt = result),
 
     "INSTRUCTIONS": loadTextFile(`./text/${config.langCode}/instructions.html`).then((result) => INSTRUCTIONS = result),
     
@@ -780,44 +786,48 @@ function getMissionOptionsForCampaign(campaign) {
 }
 
 // The better way to implement this would be to just make a dict from Gun_txt and gun.json.
-const getGunName = (gun_id, excludeIdFromCnName) => {
-  const gunNameRegex = `(gun-1(?:0*)${String(gun_id).padStart(5, '0')},)(.*)`;
-  const nativeLanguageMatch = Gun_txt.match(gunNameRegex);
-  if (nativeLanguageMatch && nativeLanguageMatch[2]) {
-    return nativeLanguageMatch[2];
-  } else {
-    const cnMatch = Gun_cn_txt.match(gunNameRegex);
-    if (excludeIdFromCnName && cnMatch && cnMatch[2]) {
-      return cnMatch[2];
-    }
-    return `[gun-${gun_id}]` + (cnMatch ? ` ${cnMatch[2]}` : "");
+const getGunName = (gun_id, excludeIdFromCnName) => {	
+  const enName = Gun_txt[Gun.filter(gun => gun.id == gun_id)[0].name];
+  const cnName = Gun_cn_txt[Gun.filter(gun => gun.id == gun_id)[0].name];
+  
+  if (enName) {
+	return enName  
+  }
+  else if (excludeIdFromCnName && cnName) {
+    return cnName;
+  }
+  else {
+    return `[gun-${gun_id}]` + (cnName ? " " + cnName : "");
   }
 };
 
 const getEquipName = (equip_id, excludeIdFromCnName) => {
-  const equipNameRegex = `(equip-1(?:0*)${String(equip_id).padStart(5, '0')},)(.*)`;
-  const nativeLanguageMatch = Equip_txt.match(equipNameRegex);
-  if (nativeLanguageMatch && nativeLanguageMatch[2]) {
-    return nativeLanguageMatch[2];
-  } else {
-    const cnMatch = Equip_cn_txt.match(equipNameRegex);
-    if (excludeIdFromCnName && cnMatch && cnMatch[2]) {
-      return cnMatch[2];
-    }
-    return `[equip-${equip_id}]` + (cnMatch ? ` ${cnMatch[2]}` : "");
+  const enName = Equip_txt[Equip.filter(equip => equip.id == equip_id)[0].name];
+  const cnName = Equip_cn_txt[Equip.filter(equip => equip.id == equip_id)[0].name];
+  
+  if (enName) {
+	return enName  
+  }
+  else if (excludeIdFromCnName && cnName) {
+    return cnName;
+  }
+  else {
+    return `[equip-${equip_id}]` + (cnName ? " " + cnName : "");
   }
 };
 
 const getSangvisName = (sangvis_id, excludeIdFromCnName) => {
-  const nativeLanguageMatch = Sangvis_txt.match(`(sangvis-1[0-9]*${sangvis_id},)(.*)`);
-  if (nativeLanguageMatch && nativeLanguageMatch[2]) {
-    return nativeLanguageMatch[2];
-  } else {
-    const cnMatch = Sangvis_cn_txt.match(`(sangvis-1[0-9]*${sangvis_id},)(.*)`);
-    if (excludeIdFromCnName && cnMatch && cnMatch[2]) {
-      return cnMatch[2];
-    }
-    return `[sangvis-${sangvis_id}]` + (cnMatch ? ` ${cnMatch[2]}` : "");
+  const enName = Sangvis_txt[Sangvis.filter(sangvis => sangvis.id == sangvis_id)[0].name];
+  const cnName = Sangvis_cn_txt[Sangvis.filter(sangvis => sangvis.id == sangvis_id)[0].name];
+  
+  if (enName) {
+	return enName  
+  }
+  else if (excludeIdFromCnName && cnName) {
+    return cnName;
+  }
+  else {
+    return `[sangvis-${sangvis_id}]` + (cnName ? " " + cnName : "");
   }
 };
 
@@ -1331,10 +1341,8 @@ function buildingdisplay(){
                 }
 
                 thenum = ("0000000").slice(0, ("0000000").length - thenum.length) + thenum;
-                var despos = Special_spot_config_txt.indexOf("special_spot_config-1" + thenum) + ("special_spot_config-1" + thenum).length + 1;
-                var newdes = Special_spot_config_txt.slice(despos, Special_spot_config_txt.indexOf("\n", despos));
-                var des2pos = Special_spot_config_txt.indexOf("\n", despos) + 1 + ("special_spot_config-2" + thenum).length + 1;
-                var new2des = Special_spot_config_txt.slice(des2pos, Special_spot_config_txt.indexOf("\n", des2pos));
+				var newdes = Special_spot_config_txt["special_spot_config-1" + thenum] ? Special_spot_config_txt["special_spot_config-1" + thenum] : Special_spot_config_cn_txt["special_spot_config-1" + thenum]; 
+                var new2des = Special_spot_config_txt["special_spot_config-2" + thenum] ? Special_spot_config_txt["special_spot_config-2" + thenum] : Special_spot_config_cn_txt["special_spot_config-2" + thenum]; 
                 buildsigndes += newdes + ((new2des == newdes || new2des.length <= 1) ? "" : ("(" + new2des + ")")) + ";";
             }
             buildsigndes = buildsigndes.slice(0, buildsigndes.length - 1);
