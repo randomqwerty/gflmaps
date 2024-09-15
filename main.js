@@ -150,8 +150,8 @@ function trans() {
     if (namestr && !namestr.match(/(?:don't|do not) translate/i)) {
       Mission[i].name = namestr;
     } else {
-      const fallback_match = Mission_cn_txt[Mission[i]];
-      Mission[i].name = fallback_match ? `[${Mission[i].name}] ${fallback_match[1]}` : `[${Mission[i].name}]`;
+      const fallback_match = Mission_cn_txt[Mission[i].name];
+      Mission[i].name = fallback_match ? `[${Mission[i].name}] ` + fallback_match : `[${Mission[i].name}]`;
     }
   }
 
@@ -950,7 +950,7 @@ function updatemap() {
       advantagedDollsNames = mission_info.adaptive_gun.split(",").map((gun_id) => getGunName(gun_id));
     }
     let advantagedDolls = advantagedDollsNames.length > 0 ? advantagedDollsNames.join(", ") : UI_TEXT["mission_info_no_advantaged_dolls"];
-    let levelPenalty = auto_mission_info.expect_gun_level + 10;
+    let levelPenalty = auto_mission_info ? auto_mission_info.expect_gun_level + 10 : null;
     let baseExperience = mission_info.exp_parameter * 10;
     let tableBody = "";
     let notes = [];
