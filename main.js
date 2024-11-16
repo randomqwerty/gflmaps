@@ -586,15 +586,17 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
     case -67: return 3048;
     // Xmas mini-event 2
     case -49: return 5049;
-    // FP
+    // FP and FP Perma Ranking
     case -51: return 3051;
+	case -40401: return 3051;
     // Valentine's mini-event 2
     case -50: return 5050;
     // Summer mini-event 3
     case -52: return 5052;
     // -53 is Iso+
-    // UNKNOWN SUMMER MINI-EVENT
+    // LS
     case -54: return 3054;
+	case -40402: return 3054;
     // -55 is SC+
     // E&S
     case -56: return 3056;
@@ -624,6 +626,10 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
     case -70: return 3070;
     // Angular Gyrus
     case -71: return 3071;
+	// Isolation Forest
+	case -72: return 3072;
+	// Arena Breakout Collab;
+	case -73: return 4073
     // Grey Zone
     case -404: return 2011;
     // Tutorials
