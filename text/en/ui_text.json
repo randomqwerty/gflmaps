@@ -2,6 +2,7 @@
   "comma": ",",
 
   "map_select": "Select Map",
+  "turnselect": "Select Turn",
   "campaigns": {
     "1000": "[Story] Chapter 0",
     "1001": "[Story] Chapter 1",
