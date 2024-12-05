@@ -604,8 +604,9 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
     case -56: return 3056;
     // ZLSR
     case -57: return 4057;
-    // Slow Shock
+    // Slow Shock and Slow Shock Perma Ranking
     case -58: return 3058;
+	case -40403: return 3058;
     // Maze Conjecture
     case -59: return 5059;
     // -60 is PL+
