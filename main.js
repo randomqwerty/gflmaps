@@ -633,6 +633,8 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -72: return 3072;
 	// Arena Breakout Collab;
 	case -73: return 4073
+	// Convolutional Kernel;
+	case -74: return 3074;
     // Grey Zone
     case -404: return 2011;
     // Tutorials
