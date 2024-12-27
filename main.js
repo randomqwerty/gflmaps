@@ -1117,7 +1117,8 @@ function missioncreat(){
     var missionOptionsHtml = missionOptions.map((opt) => `<option value="${opt.value}" ${initialMission == opt.value ? "selected" : ""}>${opt.innerHTML}</option>`).join("");
 
     var output = `
-      <div style="display:inline-block; padding:6.5px; background:#E0E0E0; color:black; position:relative; top:1px; cursor:default;">${UI_TEXT["map_select"]} ▷</div>
+      <select class="eselect" id="serverselect" style="border:none; padding:4px; background-color:#e0e0e0;"><option disabled selected value></option><option value="ch">CN</option><option value="kr">KR</option><option value="tw">TW</option><option value="en">EN</option><option value="jp">JP</option></select>
+	  <div style="display:inline-block; padding:6.5px; background:#E0E0E0; color:black; position:relative; top:1px; cursor:default;">${UI_TEXT["map_select"]} ▷</div>
       <div class="eselect"><select id="campaignselect" name="campaignselect">${campaignOptionsHtml}</select></div>
       <div class="eselect"><select id="missionselect" name="missionselect">${missionOptionsHtml}</select></div>
       <div class="eselect" style="width:85px; display:none;"><select id="layerselect" name="layerselect" style="display:block;"></select></div>
@@ -1164,6 +1165,13 @@ function missioncreat(){
       enemydisplay(Number($("#enemyselect").val()));
       updatemap();
     });
+
+    $("#serverselect").change(function(){
+      const server = $("#serverselect").val();
+	  config.dataSource = server;
+	  loadData();
+    });
+
     $(window).on('hashchange', function() {
       updatemap();
     });
