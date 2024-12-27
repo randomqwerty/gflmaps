@@ -274,6 +274,7 @@
   "display_setting_portals_table": "Portals Table",
   "display_setting_node_markings": "Highlight Nodes",
   "display_setting_combine_enemies": "Combine Identical Teams",
+  "display_setting_real_ce": "Show Real CE",
 
   "legend_hq": "HQ",
   "legend_limited_heli": "Time-Limited Heli.",

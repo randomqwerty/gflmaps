@@ -1527,7 +1527,7 @@ function teleportdisplay(){
     });
 }
 
-const generateEnemyTeamRow = (spot, enemy_team_id, spotAllyTeam, controllableAllyTeamInfo) => {
+const generateEnemyTeamRow = (spot, enemy_team_id, spotAllyTeam, controllableAllyTeamInfo, userealce = false) => {
   let rareDrops = [];
   var teamLeaderEnemyId;
   var efect = 0;
@@ -1650,8 +1650,8 @@ const generateEnemyTeamRow = (spot, enemy_team_id, spotAllyTeam, controllableAll
       teamAIDisplay = UI_TEXT["team_ai_random"];
     }
     teamAlignment = spotAllyTeam ? spotAllyTeam.name : UI_TEXT["team_alignment_enemy"];
-    teamCEPre208 = efect == 0 ? efectcal(enemy_team_id, 0, 300) : efect;
-    teamCEPost208 = efect == 0 ? efectcal(enemy_team_id, 0, 600) : efect;
+    teamCEPre208 = userealce ? efectcal(enemy_team_id, 0, 300) : (efect == 0 ? efectcal(enemy_team_id, 0, 300) : efect);
+    teamCEPost208 = userealce ? efectcal(enemy_team_id, 0, 600) : (efect == 0 ? efectcal(enemy_team_id, 0, 600) : efect);
     teamComposition = enemyoutcal(enemy_team_id);
   }
   
@@ -1688,7 +1688,7 @@ const generateEnemyTeamRow = (spot, enemy_team_id, spotAllyTeam, controllableAll
   <\/tr>`;
 };
 
-function missiondisplay(){
+function missiondisplay(userealce = false){
     /*-- 全局变量清零 --*/
     xmove = 0; ymove = 0;
     xcen = 0; ycen = 0;
@@ -1758,7 +1758,7 @@ function missiondisplay(){
         continue;
       }
 
-      output += generateEnemyTeamRow(dspot[i], enemyTeamId, spotAllyTeam, controllableAllyTeamInfo);
+      output += generateEnemyTeamRow(dspot[i], enemyTeamId, spotAllyTeam, controllableAllyTeamInfo, userealce);
     }
     
     const missionId = Number($("#missionselect").val());
@@ -2907,6 +2907,7 @@ function mapsetcreat(){
       <div class="mapsetbtn" id="sporttable" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; background-color:#f4c430; color:black; cursor:pointer;">${UI_TEXT['display_setting_portals_table']}</div>
       <div class="mapsetbtn" id="sspotsign" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; cursor:pointer;">${UI_TEXT['display_setting_node_markings']}</div>
       <div class="mapsetbtn" id="senemypile" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; cursor:pointer;">${UI_TEXT['display_setting_combine_enemies']}</div>
+	  <div class="mapsetbtn" id="srealce" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; cursor:pointer;">${UI_TEXT['display_setting_real_ce']}</div>
     </div>`;
 
     $("#mapsetdiv").css({"user-select":"none", "margin":"5px 0px"});
@@ -2985,6 +2986,9 @@ function mapsetcreat(){
             case "senemypile": {
                 enemypile();
             }
+			case "srealce": {
+				showrealCE();
+			}
             default: break;
         }
 
@@ -3020,6 +3024,27 @@ function enemypile(){
         }
     }
 }
+
+/*-- 同组敌人的堆叠 --*/
+function showrealCE(){
+    if(setmessage.srealce == 0) {
+        $(".cellacap").css("display", "table-cell");
+        $(".cellbcap").css("display", "none");
+        $(".cella").css("display", "table-cell");
+        $(".cellb").css("display", "none");
+        $(".missionline").css("display","table-row");
+		
+		missiondisplay(false);
+    }else {
+        $(".cellacap").css("display", "none");
+        $(".cellbcap").css("display", "table-cell");
+        $(".cella").css("display", "none");
+        $(".cellb").css("display", "table-cell");
+
+		missiondisplay(true);
+    }
+}
+
 
 function spotsigncreat(){
     /*-- 特殊标点 12ff00 d800ff 00ffea ccff00 --*/
