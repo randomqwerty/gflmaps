@@ -310,7 +310,7 @@ const calculateDefDrillTeamLevels = () => {
         defDrillTeamsToLevels[enemy_team_id].max = enemy_level;
       }
     });
-  console.log(defDrillTeamsToLevels);
+  //console.log(defDrillTeamsToLevels);
 };
 
 firstcreat();
@@ -1117,12 +1117,13 @@ function missioncreat(){
     var missionOptionsHtml = missionOptions.map((opt) => `<option value="${opt.value}" ${initialMission == opt.value ? "selected" : ""}>${opt.innerHTML}</option>`).join("");
 
     var output = `
-      <select class="eselect" id="serverselect" style="border:none; padding:4px; background-color:#e0e0e0;"><option disabled selected value></option><option value="ch">CN</option><option value="kr">KR</option><option value="tw">TW</option><option value="en">EN</option><option value="jp">JP</option></select>
-	  <div style="display:inline-block; padding:6.5px; background:#E0E0E0; color:black; position:relative; top:1px; cursor:default;">${UI_TEXT["map_select"]} ▷</div>
+      <div style="display:inline-block; padding:6.5px; background:#E0E0E0; color:black; position:relative; top:1px; cursor:default;">${UI_TEXT["map_select"]} ▷</div>
       <div class="eselect"><select id="campaignselect" name="campaignselect">${campaignOptionsHtml}</select></div>
       <div class="eselect"><select id="missionselect" name="missionselect">${missionOptionsHtml}</select></div>
       <div class="eselect" style="width:85px; display:none;"><select id="layerselect" name="layerselect" style="display:block;"></select></div>
-      ${UI_TEXT["turnselect"]} <input class="eselect" id="turnselect" type="number" min="1" step="1" value="1" style="border:none; width:6em; padding:10px; background-color:#e0e0e0;">
+	  <br>
+      ${UI_TEXT["serverselect"]} <select class="eselect" id="serverselect" style="border:none; padding:4px; background-color:#e0e0e0;"><option disabled selected value></option><option value="ch">CN</option><option value="kr">KR</option><option value="tw">TW</option><option value="en">EN</option><option value="jp">JP</option></select>
+	  ${UI_TEXT["turnselect"]} <input class="eselect" id="turnselect" type="number" min="1" step="1" value="1" style="border:none; width:6em; padding:10px; background-color:#e0e0e0;">
       <div id="packselect" style="inline-block; user-select:none; cursor:default; margin:"></div>
     `;
 
@@ -2714,6 +2715,7 @@ function enemydisplay(enemy_team_id){
           <th>${UI_TEXT["enemy_forceshield_max"]}<\/th>
           <th>${UI_TEXT["enemy_forceshield_initial_pct"]}<\/th>
           <th>${UI_TEXT["enemy_coordinates"]}<\/th>
+		  <th>${UI_TEXT["enemy_character_type"]}<\/th>
         <\/tr><\/thead>
         <tbody id="Eenmybody">`;
 
@@ -2807,8 +2809,9 @@ function enemydisplay(enemy_team_id){
         //thisline += displayedValues.def_break + `<\/td><td class="enemycell" index="16" width="79px">`;
         thisline += displayedValues.def + `<\/td><td class="enemycell" index="17">`;
         thisline += Number(def_percent) + `%<\/td><td class="enemycell" index="18">`;
-        thisline += "(" + coordinator_x + "," + coordinator_y + `)<\/td><\/tr>`;
-
+        thisline += "(" + coordinator_x + "," + coordinator_y + `)<\/td><td class="enemycell" index="19">`;
+        thisline += Number(enemy_character_type_id) + `<\/td><\/tr>`;
+		
         output += thisline;
 
         dcoordinator(1, "#e91e63", coordinator_x, coordinator_y);

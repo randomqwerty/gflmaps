@@ -3,6 +3,7 @@
 
   "map_select": "Select Map",
   "turnselect": "Select Turn",
+  "serverselect": "Select Server",
   "campaigns": {
     "1000": "[Story] Chapter 0",
     "1001": "[Story] Chapter 1",
@@ -241,6 +242,7 @@
   "enemy_forceshield_max": "Max Force Shield",
   "enemy_forceshield_initial_pct": "Initial Force Shield %",
   "enemy_coordinates": "Starting Coordinates",
+  "enemy_character_type": "Enemy Character ID",
 
   "ally_name": "Name",
   "ally_links": "Links",
