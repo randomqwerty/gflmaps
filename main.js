@@ -1665,8 +1665,8 @@ const generateEnemyTeamRow = (spot, enemy_team_id, spotAllyTeam, controllableAll
   /*-- 利用数组存储效能数据以优化计算 --*/
   spotinfo.push({
     sename: teamLeader,
-    sefectPre208:((efect == 0) ? efectcal(enemy_team_id, 0, 300) : efect),
-    sefectPost208:((efect == 0) ? efectcal(enemy_team_id, 0, 600) : efect),
+    sefectPre208:(userealce ? efectcal(enemy_team_id, 0, 300) : ((efect == 0) ? efectcal(enemy_team_id, 0, 300) : efect)),
+    sefectPost208:(userealce ? efectcal(enemy_team_id, 0, 600) : ((efect == 0) ? efectcal(enemy_team_id, 0, 600) : efect)),
     hasFakeCeError,
     seai: teamAI,
     sbuild: 0,
@@ -1766,7 +1766,7 @@ function missiondisplay(userealce = false){
     if (missionId in missionIdToSuspectedSpawns) {
       output += `<tr><td colspan="8" class="mission-spawn-separator">${UI_TEXT["team_suspected_spawns"]}</td></tr>`
         + missionIdToSuspectedSpawns[missionId]
-          .map((enemyTeamId) => generateEnemyTeamRow(null, enemyTeamId, null, null))
+          .map((enemyTeamId) => generateEnemyTeamRow(null, enemyTeamId, null, null, userealce))
           .join('');
     }
 
