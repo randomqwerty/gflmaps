@@ -31,6 +31,11 @@ var trial_info;
 var Building, BuildingMap;
 var Team_ai;
 var Mission_targettrain_enemy;
+var Mission_event_prize_info;
+var Fairy;
+var Item;
+var Gift_item;
+var Prize;
 
 var Mission_txt, Mission_cn_txt;
 var Enemy_charater_type_txt, Enemy_charater_type_cn_txt;
@@ -42,6 +47,9 @@ var Sangvis_txt, Sangvis_cn_txt;
 var Team_ai_txt;
 var Mission_targettrain_enemy_txt, Mission_targettrain_enemy_cn_txt;
 var Special_spot_config_txt, Special_spot_config_cn_txt;
+var Fairy_txt, Fairy_cn_txt;
+var Item_txt, Item_cn_txt;
+var Gift_item_txt, Gift_item_cn_txt;
 
 var UI_TEXT = {};
 var INSTRUCTIONS = "";
@@ -400,8 +408,18 @@ const loadData = async () => {
     "Gun_in_ally": loadStcFile(`gun_in_ally.json`).then((result) => Gun_in_ally = result),
     "Sangvis": loadStcFile(`sangvis.json`).then((result) => Sangvis = result),
     "Sangvis_in_ally": loadStcFile(`sangvis_in_ally.json`).then((result) => Sangvis_in_ally = result),
-    "equip_in_ally_info": loadCatchFile(`equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
+    "Fairy": loadStcFile(`fairy.json`).then((result) => Fairy = result),
+    "Item": loadStcFile(`item.json`).then((result) => Item = result),
+    "Gift_item": loadStcFile(`gift_item.json`).then((result) => Gift_item = result),
+    "Prize": loadStcFile(`prize.json`).then((result) => Prize = result),
+    "Furniture": loadStcFile(`furniture.json`).then((result) => Furniture = result),
+    "Skin": loadStcFile(`skin.json`).then((result) => Skin = result),
+    "Commander_uniform": loadStcFile(`commander_uniform.json`).then((result) => Commander_uniform = result),
+    
+	"equip_in_ally_info": loadCatchFile(`equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
     "trial_info": loadCatchFile(`trial_info.json`).then((result) => trial_info = result["trial_info"]),
+	"Mission_event_prize_info": loadCatchFile(`mission_event_prize_info.json`).then((result) => Mission_event_prize_info = result["mission_event_prize_info"]),
+	
     /*
     "ConstructibleThings": loadJsonFile(`./data/${config.dataSource}/Recommended_formula.json`).then((result) => {
       result.forEach((formula) => {
@@ -440,6 +458,18 @@ const loadData = async () => {
     "Mission_targettrain_enemy_cn_txt": loadCnTextTable(`mission_targettrain_enemy.json`).then((result) => Mission_targettrain_enemy_cn_txt = result),
     "Special_spot_config_txt": loadTextTable(`special_spot_config.json`).then((result) => Special_spot_config_txt = result),
     "Special_spot_config_cn_txt": loadCnTextTable(`special_spot_config.json`).then((result) => Special_spot_config_cn_txt = result),
+	"Fairy_txt": loadTextTable(`fairy.json`).then((result) => Fairy_txt = result),
+    "Fairy_cn_txt": loadCnTextTable(`fairy.json`).then((result) => Fairy_cn_txt = result),
+	"Item_txt": loadTextTable(`item.json`).then((result) => Item_txt = result),
+	"Item_cn_txt": loadCnTextTable(`item.json`).then((result) => Item_cn_txt = result),
+	"Gift_item_txt": loadTextTable(`gift_item.json`).then((result) => Gift_item_txt = result),
+	"Gift_item_cn_txt": loadCnTextTable(`gift_item.json`).then((result) => Gift_item_cn_txt = result),
+	"Furniture_txt": loadTextTable(`furniture.json`).then((result) => Furniture_txt = result),
+	"Furniture_cn_txt": loadCnTextTable(`furniture.json`).then((result) => Furniture_cn_txt = result),
+	"Skin_txt": loadTextTable(`skin.json`).then((result) => Skin_txt = result),
+	"Skin_cn_txt": loadCnTextTable(`skin.json`).then((result) => Skin_cn_txt = result),
+	"Commander_uniform_txt": loadTextTable(`commander_uniform.json`).then((result) => Commander_uniform_txt = result),
+	"Commander_uniform_cn_txt": loadCnTextTable(`commander_uniform.json`).then((result) => Commander_uniform_cn_txt = result),
 
     "INSTRUCTIONS": loadTextFile(`./text/${config.langCode}/instructions.html`).then((result) => INSTRUCTIONS = result),
     
@@ -745,7 +775,7 @@ function getMissionOptionsForCampaign(campaign) {
   else if(campaign > 3000 && campaign < 5000){
       for (i in Mission) {
           /*-- 去除剧情关卡 --*/
-          if(Mission[i].special_type == 8 || Mission[i].special_type == 9) continue;
+          //if(Mission[i].special_type == 8 || Mission[i].special_type == 9) continue;
           var camp = Number(Mission[i].campaign);
           /*-- 主线活动 --*/
           if (campaign != convertGameCampaignToUiCampaign(camp)) {
@@ -759,7 +789,7 @@ function getMissionOptionsForCampaign(campaign) {
           else innerHTML = String(- Number(camp) - (campaign - ((campaign > 4000) ? 4000 : 3000) - 1)) + "-" + Mission[i].sub + " ";
           /*-- 秃洞的识别 无尽模式 --*/
           if (isRanking(Mission[i])) innerHTML += `[${UI_TEXT["endless_map"]}] `;
-          innerHTML += Mission[i].name.replace("//n", " ");
+          innerHTML += Mission[i].name.replace("//n", " ") + (Mission[i].special_type == 8 || Mission[i].special_type == 9 ? ' (STORY)' : '');
           missionOptions.push({
             value: Number(Mission[i].id),
             innerHTML
@@ -771,11 +801,11 @@ function getMissionOptionsForCampaign(campaign) {
   else if(campaign > 5000 && campaign < 6000){
       for (i in Mission) {
           /*-- 去除剧情关卡 --*/
-          if(Mission[i].special_type == 8 || Mission[i].special_type == 9) continue;
+          //if(Mission[i].special_type == 8 || Mission[i].special_type == 9) continue;
           if ((Mission[i].campaign == - (campaign - 5000)) && (Mission[i].if_emergency != 2)) {
               var innerHTML = Mission[i].sub + " ";
               if (isRanking(Mission[i])) innerHTML += `[${UI_TEXT["endless_map"]}] `;
-              innerHTML += Mission[i].name.replace("//n", " ");
+              innerHTML += Mission[i].name.replace("//n", " ") + (Mission[i].special_type == 8 || Mission[i].special_type == 9 ? ' (STORY)' : '');
               missionOptions.push({
                 value: Number(Mission[i].id),
                 innerHTML
@@ -787,12 +817,12 @@ function getMissionOptionsForCampaign(campaign) {
   else if(campaign == 9999) {
       for (i in Mission) {
           /*-- 去除剧情关卡 --*/
-          if(Mission[i].special_type == 8 || Mission[i].special_type == 9) continue;
+          //if(Mission[i].special_type == 8 || Mission[i].special_type == 9) continue;
           if(Mission[i].campaign >= 0 || convertGameCampaignToUiCampaign(Mission[i].campaign) != null) continue;
 
           missionOptions.push({
             value: Number(Mission[i].id),
-            innerHTML: Mission[i].campaign + "-" + Mission[i].sub + " " + (isRanking(Mission[i]) ? `[${UI_TEXT["endless_map"]}] ` : "") + Mission[i].name.replace("//n", " ")
+            innerHTML: Mission[i].campaign + "-" + Mission[i].sub + " " + (isRanking(Mission[i]) ? `[${UI_TEXT["endless_map"]}] ` : "") + Mission[i].name.replace("//n", " ")  + (Mission[i].special_type == 8 || Mission[i].special_type == 9 ? ' (STORY)' : '')
           });
       }
 
@@ -963,7 +993,34 @@ function updatemap() {
     let advantagedDolls = advantagedDollsNames.length > 0 ? advantagedDollsNames.join(", ") : UI_TEXT["mission_info_no_advantaged_dolls"];
     let levelPenalty = auto_mission_info ? auto_mission_info.expect_gun_level + 10 : 0;
     let baseExperience = mission_info.exp_parameter * 10;
-    let tableBody = "";
+
+	let clearRewards = '';
+	
+	const mission_prize = Mission_event_prize_info.filter(mission_event_prize_info => Number(mission_event_prize_info.mission_id) == mission_info.id)[0];
+	const prize_id = mission_prize ? mission_prize.prize_id : null;
+	const prize_info = prize_id ? Prize.filter(prize => prize.id == prize_id)[0] : null;
+	
+	// Super ugly and should be cleaned at some point
+	// NOTE: need to fix to account for multiple gifts/items/guns/etc...
+	if (prize_info) {
+		clearRewards = [
+			prize_info.mp && prize_info.mp != '0'? prize_info.mp + 'x4 Resources' : null,
+			prize_info.core && prize_info.core != '0' ? prize_info.core + ' Cores' : null,
+			prize_info.gem && prize_info.gem != '0' ? prize_info.gem + ' Gems' : null,
+			prize_info.gun_id && prize_info.gun_id != '0' ? (Gun_txt[Gun.filter(gun => gun.id == prize_info.gun_id)[0].name] ?? Gun_cn_txt[Gun.filter(gun => gun.id == prize_info.gun_id)[0].name]) : null,
+			prize_info.sangvis && prize_info.sangvis != '0' ? (Sangvis_txt[Sangvis.filter(sangvis => sangvis.id == prize_info.sangvis)[0].name] ?? Sangvis_cn_txt[Sangvis.filter(sangvis => sangvis.id == prize_info.sangvis)[0].name]) : null,
+			prize_info.item_ids && prize_info.item_ids != '0' ? (Item_txt[Item.filter(item => item.id == prize_info.item_ids.split('-')[0])[0].item_name] ?? Item_cn_txt[Item.filter(item => item.id == prize_info.item_ids.split('-')[0])[0].item_name])  + ' x' + prize_info.item_ids.split('-')[1] : null,
+			prize_info.furniture && prize_info.furniture != '0' ? (Furniture_txt[Furniture.filter(furniture => furniture.id == prize_info.furniture)[0].name] ?? Furniture_cn_txt[Furniture.filter(furniture => furniture.id == prize_info.furniture)[0].name]) + ' (Furniture)' : null,
+			prize_info.gift && prize_info.gift != '0' ? (Gift_item_txt[Gift_item.filter(gift_item => gift_item.id == prize_info.gift.split('-')[0])[0].name] ?? Gift_item_cn_txt[Gift_item.filter(gift_item => gift_item.id == prize_info.gift.split('-')[0])[0].name])  + ' x' + prize_info.gift.split('-')[1] : null,
+			prize_info.equip_ids && prize_info.equip_ids != '0' ? Equip.filter(equip => prize_info.equip_ids.split(',').includes(equip.id.toString())).map(x => Equip_txt[x.name] ?? Equip_cn_txt[x.name]).join(', ') : null,
+			prize_info.coins && prize_info.coins != '0' ? (prize_info.coins.split('-')[0] == '1' ? 'Basic Data' : prize_info.coins.split('-')[0] == '2' ? 'Int. Data' : 'Adv. Data')   + ' x' + prize_info.coins.split('-')[1] : null,
+			prize_info.skin && prize_info.skin != '0' ? (Skin_txt[Skin.filter(skin => skin.id == prize_info.skin)[0].name] ?? Skin_cn_txt[Skin.filter(skin => skin.id == prize_info.skin)[0].name]) + ' (Skin)' : null,
+			prize_info.fairy_ids && prize_info.fairy_ids != '0' ? prize_info.fairy_ids.split(',').map(x => Fairy_txt[Fairy.filter(fairy => fairy.id == x.split('-')[0])[0].name] ?? Fairy_cn_txt[Fairy.filter(fairy => fairy.id == x.split('-')[0])[0].name]).join(', ') : null,
+			prize_info.commander_uniform && prize_info.commander_uniform != '0' ? (Commander_uniform_txt[Commander_uniform.filter(uniform => uniform.id == prize_info.commander_uniform)[0].name] ?? Commander_uniform_cn_txt[Commander_uniform.filter(uniform => uniform.id == prize_info.commander_uniform)[0].name]) + ' (SKK Outfit)' : null
+		].filter(Boolean).join(', ');
+	};
+	
+	let tableBody = "";
     let notes = [];
 
     // LS Map 2
@@ -981,6 +1038,7 @@ function updatemap() {
            <th>${UI_TEXT["mission_info_advantaged_dolls"]}</th>
            <th>${UI_TEXT["mission_info_level_penalty"]}</th>
            <th>${UI_TEXT["mission_info_base_exp"]}</th>
+		   <th>${UI_TEXT["mission_clear_rewards"]}</th>
          </tr></thead>
          <tbody>
            <tr>
@@ -995,6 +1053,7 @@ function updatemap() {
              <td>${advantagedDolls}</td>
              <td>${levelPenalty}</td>
              <td>${baseExperience}</td>
+			 <td>${clearRewards}</td>
            </tr>
            <tr>
              <td>>= 350,000</td>
@@ -1006,6 +1065,7 @@ function updatemap() {
              <td>N/A</td>
              <td></td>
              <td></td>
+			 <td></td>
            </tr>
          </tbody>`;
       notes.push(UI_TEXT["mission_info_hoc_excluded"]);
@@ -1041,6 +1101,7 @@ function updatemap() {
            <th>${UI_TEXT["mission_info_advantaged_dolls"]}</th>
            <th>${UI_TEXT["mission_info_level_penalty"]}</th>
            <th>${UI_TEXT["mission_info_base_exp"]}</th>
+		   <th>${UI_TEXT["mission_clear_rewards"]}</th>
          </tr></thead>
          <tbody><tr>
            <td>${mission_info.special_type > 0 ? UI_TEXT["mission_info_environment_night"] : UI_TEXT["mission_info_environment_day"]}</td>
@@ -1053,6 +1114,7 @@ function updatemap() {
            <td>${advantagedDolls}</td>
            <td>${levelPenalty}</td>
            <td>${baseExperience}</td>
+		   <td>${clearRewards}</td>
          </tr></tbody>`;
     }
     
