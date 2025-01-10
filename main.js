@@ -2200,12 +2200,7 @@ function drawmap(func){
 				for(k in dspot){ if(dspot[k].id == i2Id){ i2 = k; break;}}
 				if (i2 == -1) {
 				  //console.log("can't find node: " + i2Id);
-				} else if (dspot[i2].route.indexOf(dspot[i].id.toString()) == -1) {
-				  //console.log("one-way route: " + dspot[i].id + " -> " + dspot[i2].id);
 				} else {
-				  //console.log("two-way route: " + dspot[i].id + " <-> " + dspot[i2].id);
-
-				  /*--  两个路径点的原始坐标  --*/
 				  var x1 = Number(dspot[i].coordinator_x);
 				  var x2 = Number(dspot[i2].coordinator_x);
 				  var y1 = Number(dspot[i].coordinator_y);
