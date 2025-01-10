@@ -526,7 +526,7 @@ var eteamspot = [];
 /*-- 下载 sdownload  重置 sredraw  隐藏 smaphide
     敌人 smapenemy  建筑 smapbuild  颜色 smapcolor  标号 smapspotn  逻辑 smapenemyai
     建筑表格 sbuildtable  传送表格 sporttable  点位标记 sspotsign  同组堆叠 senemypile  --*/
-var setmessage = {sdownload:0, sredraw:0, smaphide:0, smapenemy:1, smapbuild:1, smapcolor:1, smapspotn:1, smapenemyai:1, sbuildtable:1, sporttable:1, sspotsign:0, senemypile:0};
+var setmessage = {sdownload:0, sredraw:0, smaphide:0, smapenemy:1, smapbuild:1, smapcolor:1, smapspotn:1, smapenemyai:1, smapexpandroute:0, sbuildtable:1, sporttable:1, sspotsign:0, senemypile:0, srealce:0};
 
 // This converts the game's campaign IDs (on Mission.json) to the campaign ID
 // on the campaign select (UI_TEXT["campaign"]).
@@ -1936,9 +1936,7 @@ function drawmap(func){
 
     /*--  路径点的绘制  --*/
     var singlespot = [];
-    con.lineWidth = String(30 / coparameter);
-    con.strokeStyle = "#cecece";
-    // console.log("dspot", dspot);
+	// console.log("dspot", dspot);
     for(i in dspot){
         /*--  路径点的连接  --*/
         // CHANGE FROM GFWIKI: Use route instead of map_route.
@@ -1967,17 +1965,19 @@ function drawmap(func){
               var y2 = Number(dspot[i2].coordinator_y);
 
               /*--  双向路径的绘制  --*/
+			  con.lineWidth = String(30 / coparameter);
+			  con.strokeStyle = "#cecece";
               con.lineWidth = String(coorchange(3, 30));
               con.beginPath();
               con.moveTo(coorchange(1, x1, x_min), coorchange(2, y1, y_min));
               con.lineTo(coorchange(1, x2, x_min), coorchange(2, y2, y_min));
-              con.stroke();
+			  con.stroke();
             }
 
             // CHANGE FROM GFWIKI: Removed unnecessary ", j".
             routestr = (routestr.indexOf(",") == -1) ? "" : routestr.slice(routestr.indexOf(",") + 1, routestr.length);
         }
-    }
+	}
 
     for(i in singlespot){
         var x1 = Number(dspot[singlespot[i].a1].coordinator_x);
@@ -2169,6 +2169,7 @@ function drawmap(func){
             con.fillText(dspot[i].id, coorchange(1, Number(dspot[i].coordinator_x), x_min) + coorchange(3, 55), coorchange(2, Number(dspot[i].coordinator_y), y_min) + coorchange(3, 70));
             con.stroke();
         }
+		
         if (dspot[i].active_cycle) {
           let closedHeliText = "";
           const cycleMatch = dspot[i].active_cycle.match(/^(\d+),(\d+)$/);
@@ -2186,6 +2187,44 @@ function drawmap(func){
           con.strokeText(closedHeliText, coorchange(1, Number(dspot[i].coordinator_x), x_min) - coorchange(3, 125), coorchange(2, Number(dspot[i].coordinator_y) , y_min) + coorchange(3, 70));
           con.fillText(closedHeliText, coorchange(1, Number(dspot[i].coordinator_x), x_min) - coorchange(3, 125), coorchange(2, Number(dspot[i].coordinator_y), y_min) + coorchange(3, 70));
           con.stroke();
+        }
+		
+		con.textAlign="left";
+        if(setmessage.smapexpandroute == 1){
+			var routestr = dspot[i].route;
+			var routeNum = 1;
+			while(routestr){
+				var i2Id = Number(routestr.slice(0, (routestr.indexOf(",") == -1) ? (routestr.length) : routestr.indexOf(",")));
+				var i2 = -1;
+
+				for(k in dspot){ if(dspot[k].id == i2Id){ i2 = k; break;}}
+				if (i2 == -1) {
+				  //console.log("can't find node: " + i2Id);
+				} else if (dspot[i2].route.indexOf(dspot[i].id.toString()) == -1) {
+				  //console.log("one-way route: " + dspot[i].id + " -> " + dspot[i2].id);
+				} else {
+				  //console.log("two-way route: " + dspot[i].id + " <-> " + dspot[i2].id);
+
+				  /*--  两个路径点的原始坐标  --*/
+				  var x1 = Number(dspot[i].coordinator_x);
+				  var x2 = Number(dspot[i2].coordinator_x);
+				  var y1 = Number(dspot[i].coordinator_y);
+				  var y2 = Number(dspot[i2].coordinator_y);
+				  
+				  con.strokeStyle = "#111111";			  
+				  con.fillStyle = "#00FFFF";
+				  con.lineWidth= String(coorchange(3, 12));
+				  con.font = String(coorchange(3, 50)) + `px bold ${fontList}`;
+				  con.textAlign = "right";
+				  con.beginPath();
+				  con.strokeText(routeNum, coorchange(1, x1+(x2-x1)*0.25, x_min), coorchange(2, y1+(y2-y1)*0.25, y_min));
+				  con.fillText(routeNum, coorchange(1, x1+(x2-x1)*0.25, x_min), coorchange(2, y1+(y2-y1)*0.25, y_min));
+				  con.stroke();
+				}
+
+				routestr = (routestr.indexOf(",") == -1) ? "" : routestr.slice(routestr.indexOf(",") + 1, routestr.length);
+				routeNum += 1;
+			}
         }
     }
 
@@ -2966,6 +3005,7 @@ function mapsetcreat(){
       <div class="mapsetbtn" id="smapbuild" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; background-color:#f4c430; color:black; cursor:pointer;">${UI_TEXT['display_setting_buildings']}</div>
       <div class="mapsetbtn" id="smapspotn" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; background-color:#f4c430; color:black; cursor:pointer;">${UI_TEXT['display_setting_location']}</div>
       <div class="mapsetbtn" id="smapenemyai" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; background-color:#f4c430; color:black; cursor:pointer;">${UI_TEXT['display_setting_ai']}</div>
+	  <div class="mapsetbtn" id="smapexpandroute" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; cursor:pointer;">${UI_TEXT['display_setting_expandroute']}</div>
     </div>
     <div class="mapsetbtncontainer">
       <div class="mapsetbtn" id="sbuildtable" style="display:inline-block; user-select:none; border:1px #eaeaea solid; padding:5px 10px; background-color:#f4c430; color:black; cursor:pointer;">${UI_TEXT['display_setting_buildings_table']}</div>
@@ -3109,7 +3149,6 @@ function showrealCE(){
 		missiondisplay(true);
     }
 }
-
 
 function spotsigncreat(){
     /*-- 特殊标点 12ff00 d800ff 00ffea ccff00 --*/

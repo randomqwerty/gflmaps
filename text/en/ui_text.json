@@ -272,6 +272,7 @@
   "display_setting_nodecolor": "Node Color",
   "display_setting_location": "Locations",
   "display_setting_ai": "AI",
+  "display_setting_expandroute": "Expand Tiebreaker",
 
   "display_setting_buildings_table": "Buildings Table",
   "display_setting_portals_table": "Portals Table",
