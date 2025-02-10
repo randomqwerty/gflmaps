@@ -36,6 +36,7 @@ var Fairy;
 var Item;
 var Gift_item;
 var Prize;
+var Daily_mission_group;
 
 var Mission_txt, Mission_cn_txt;
 var Enemy_charater_type_txt, Enemy_charater_type_cn_txt;
@@ -415,6 +416,7 @@ const loadData = async () => {
     "Furniture": loadStcFile(`furniture.json`).then((result) => Furniture = result),
     "Skin": loadStcFile(`skin.json`).then((result) => Skin = result),
     "Commander_uniform": loadStcFile(`commander_uniform.json`).then((result) => Commander_uniform = result),
+    "Daily_mission_group": loadStcFile(`daily_mission_group.json`).then((result) => Daily_mission_group = result),
     
 	"equip_in_ally_info": loadCatchFile(`equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
     "trial_info": loadCatchFile(`trial_info.json`).then((result) => trial_info = result["trial_info"]),
@@ -666,7 +668,10 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	// Convolutional Kernel;
 	case -74: return 3074;
     // Grey Zone
-    case -404: return 2011;
+    case -4041: return 2011;
+	case -4042: return 2012;
+	case -4043: return 2013;
+	case -4044: return 2014;
     // Tutorials
     case -10000:
     case -10001:
@@ -675,7 +680,7 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
     case -10004:
     case -10005: return 2009;
     // Mobile Armor Tutorials
-    case -10006: return 2012;
+    case -10006: return 2015;
   }
 }
 
@@ -748,13 +753,22 @@ function getMissionOptionsForCampaign(campaign) {
       innerHTML: UI_TEXT["defdrill_wave_110"],
     }];
   }
-  else if(Number(campaign) === 2011){
-    missionOptions = Mission.filter(({campaign}) => campaign === -404).map((mission) => ({
-      value: Number(mission.id),
-      innerHTML: mission.name.replace("//n", " ")
-    }));
+  else if(Number(campaign) >= 2011 && Number(campaign) <= 2014){
+    gzMissionsToDiff = [];
+	Daily_mission_group.forEach(i => i.mission_group.split(",").forEach(j => gzMissionsToDiff[Number(j)] = i.difficulty));
+	var gzDiff = Number(campaign) - 2010;
+	
+	for (i in Mission) {
+		if ((Number(Mission[i].campaign) === -404) && (gzDiff === (gzMissionsToDiff[Mission[i].id] ?? 0))) {
+			missionOptions.push({
+			  value: Number(Mission[i].id),
+			  innerHTML: Mission[i].name.replace("//n", " ")
+			});
+			console.log(Number(Mission[i].id), gzDiff, gzMissionsToDiff[Mission[i].id], Mission[i].name.replace("//n", " "));
+		}
+	}
   }
-  else if(Number(campaign) === 2012){
+  else if(Number(campaign) === 2015){
     missionOptions = Mission.filter(({campaign}) => campaign === -10006).map((mission) => ({
       value: Number(mission.id),
       innerHTML: mission.name.replace("//n", " ")
@@ -1139,7 +1153,10 @@ function missioncreat(){
     /*-- 战役的选择创建 --*/
     const availableCampaigns = [...new Set(Mission.map((m) => m.campaign))];
     const missionsToCampaign = Object.fromEntries(Mission.map((m) => [m.id, m.campaign]));
-
+	
+	gzMissionsToDiff = [];
+	Daily_mission_group.forEach(i => i.mission_group.split(",").forEach(j => gzMissionsToDiff[Number(j)] = i.difficulty));
+	
     const initialParams = new URLSearchParams(window.location.hash.slice(1));
     let initialCampaign = initialParams.get("campaign");
     if (!initialCampaign || !(initialCampaign in UI_TEXT["campaigns"])) {
@@ -1155,7 +1172,7 @@ function missioncreat(){
       if (initialCampaign == 9999 && initialMission in missionsToCampaign) {
         // Here we try to find out which campaign option the mission is classified
         // under now.
-        let newUiCampaign = convertGameCampaignToUiCampaign(Number(missionsToCampaign[initialMission]));
+        let newUiCampaign = convertGameCampaignToUiCampaign(Number("" + missionsToCampaign[initialMission] + gzMissionsToDiff[initialMission]));
         if (!!newUiCampaign) {
           initialCampaign = newUiCampaign;
         } else {
