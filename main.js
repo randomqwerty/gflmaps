@@ -667,12 +667,13 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -73: return 4073
 	// Convolutional Kernel;
 	case -74: return 3074;
-    // Grey Zone
-    case -4041: return 2011;
-	case -4042: return 2012;
-	case -4043: return 2013;
-	case -4044: return 2014;
-    // Tutorials
+    // Grey Zone, edited to split GZ1-4 separately
+    case -4041: return 2011; // GZ1
+	case -4042: return 2012; // GZ2
+	case -4043: return 2013; // GZ3
+	case -4044: return 2014; // GZ4
+	case -404: return 2016; // All other GZ (unused, tower)
+	// Tutorials
     case -10000:
     case -10001:
     case -10002:
@@ -680,7 +681,7 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
     case -10004:
     case -10005: return 2009;
     // Mobile Armor Tutorials
-    case -10006: return 2015;
+    case -10006: return 2016;
   }
 }
 
@@ -753,22 +754,21 @@ function getMissionOptionsForCampaign(campaign) {
       innerHTML: UI_TEXT["defdrill_wave_110"],
     }];
   }
-  else if(Number(campaign) >= 2011 && Number(campaign) <= 2014){
+  else if(Number(campaign) >= 2011 && Number(campaign) <= 2015){
     gzMissionsToDiff = [];
 	Daily_mission_group.forEach(i => i.mission_group.split(",").forEach(j => gzMissionsToDiff[Number(j)] = i.difficulty));
-	var gzDiff = Number(campaign) - 2010;
+	var gzDiff = Number(campaign) == 2015 ? null : Number(campaign) - 2010;
 	
 	for (i in Mission) {
-		if ((Number(Mission[i].campaign) === -404) && (gzDiff === (gzMissionsToDiff[Mission[i].id] ?? 0))) {
+		if ((Number(Mission[i].campaign) === -404) && (gzDiff === (gzMissionsToDiff[Mission[i].id] ?? null))) {
 			missionOptions.push({
 			  value: Number(Mission[i].id),
 			  innerHTML: Mission[i].name.replace("//n", " ")
 			});
-			console.log(Number(Mission[i].id), gzDiff, gzMissionsToDiff[Mission[i].id], Mission[i].name.replace("//n", " "));
 		}
 	}
   }
-  else if(Number(campaign) === 2015){
+  else if(Number(campaign) === 2016){
     missionOptions = Mission.filter(({campaign}) => campaign === -10006).map((mission) => ({
       value: Number(mission.id),
       innerHTML: mission.name.replace("//n", " ")
