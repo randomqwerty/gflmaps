@@ -767,6 +767,13 @@ function getMissionOptionsForCampaign(campaign) {
 			});
 		}
 	}
+	
+	// Sort GZ stages by name rather than mission ID
+	missionOptions.sort((a, b) => {
+		if (a.innerHTML < b.innerHTML) return -1;
+		if (a.innerHTML > b.innerHTML) return 1;
+		return 0;
+	});
   }
   else if(Number(campaign) === 2016){
     missionOptions = Mission.filter(({campaign}) => campaign === -10006).map((mission) => ({
