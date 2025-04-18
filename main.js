@@ -1874,7 +1874,7 @@ function missiondisplay(userealce = false){
         if(setmessage.sspotsign == 1) {
           $("#spotsign1").val(spotId);
         }
-        if ($($(this).children("td")[3]).html() == UI_TEXT["team_ai_patrol"]) {
+        if ($($(this).children("td")[3]).html() == UI_TEXT["team_ai_patrol"] || enemyTeam.ai_content.includes(",")) {
           theaicontent = {patrol: {spotId, aiContent: enemyTeam.ai_content}};
         } else if ($($(this).children("td")[3]).html().indexOf(UI_TEXT["team_ai_alert"]) != -1) {
           theaicontent = {alert: {spotId, aiContent: enemyTeam.ai_content}};
