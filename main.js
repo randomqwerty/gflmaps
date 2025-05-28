@@ -324,7 +324,7 @@ const calculateDefDrillTeamLevels = () => {
 
 firstcreat();
 
-const loadImageAsset = (path) => {
+const loadImageAsset = (path, fallbackPath = undefined) => {
   if (path in loadedImageAssets) {
     return Promise.resolve(loadedImageAssets[path]);
   }
@@ -337,7 +337,14 @@ const loadImageAsset = (path) => {
       }
       resolve(loadedImageAssets[path]);
     };
-    img.onerror = () => reject();
+    img.onerror = () => {
+      if (fallbackPath) {
+        img.onerror = null; // Prevent infinite loop if fallback also fails
+        img.src = `./images/${fallbackPath}`;
+      } else {
+        reject();
+      }
+    };
     img.src = `./images/${path}`;
   });
 };
@@ -351,7 +358,7 @@ const isRanking = (mission) => (
 const getChibiPath = (code) => `map_chibis/${code}_wait0.gif`;
 const getChibi = (code) => loadedImageAssets[getChibiPath(code)];
 const loadChibi = (code, redrawFunc) => {
-  loadImageAsset(getChibiPath(code)).then(() => redrawFunc && redrawFunc());
+  loadImageAsset(getChibiPath(code), getChibiPath('fallback')).then(() => redrawFunc && redrawFunc());
 };
 
 const loadData = async () => {
