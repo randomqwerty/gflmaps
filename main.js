@@ -341,6 +341,7 @@ const loadImageAsset = (path, fallbackPath = undefined) => {
       if (fallbackPath) {
         img.onerror = null; // Prevent infinite loop if fallback also fails
         img.src = `./images/${fallbackPath}`;
+        console.log("Could not find chibi, using fallback " + path);
       } else {
         reject();
       }
