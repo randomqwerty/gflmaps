@@ -675,7 +675,9 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -73: return 4073
 	// Convolutional Kernel;
 	case -74: return 3074;
-    // Grey Zone, edited to split GZ1-4 separately
+	// Roche Limit;
+	case -75: return 3075;
+	// Grey Zone, edited to split GZ1-4 separately
     case -4041: return 2011; // GZ1
 	case -4042: return 2012; // GZ2
 	case -4043: return 2013; // GZ3
