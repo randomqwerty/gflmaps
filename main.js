@@ -282,6 +282,21 @@ const calculateSuspectedSpawns = () => {
     ...(missionIdToSuspectedSpawns[10105] || []),
     2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2141,2142,2143,2144,2145,2146
   ])];
+  // Coalition Drill Combat Reports
+  missionIdToSuspectedSpawns[1601] = [...new Set([
+    ...(missionIdToSuspectedSpawns[1601] || []),
+    940001,940002,940003,940004,940005
+  ])];
+  // Coalition Drill Petri Dishes
+  missionIdToSuspectedSpawns[1602] = [...new Set([
+    ...(missionIdToSuspectedSpawns[1602] || []),
+    940006,940007,940008,940009,940010
+  ])];
+  // Coalition Drill Data
+  missionIdToSuspectedSpawns[1603] = [...new Set([
+    ...(missionIdToSuspectedSpawns[1603] || []),
+    940011,940012,940013,940014,940015
+  ])];
 };
 
 const calculateTheaterLevelAdjustments = () => {
@@ -995,6 +1010,14 @@ function updatemap() {
     traindisplay(); 
     $("#missioninfo").html("");
     return;
+  } else if (campaign == 2007) {
+    $("#missiondrawing")[0].getContext("2d").clearRect(0, 0, mapwidth, mapheight);
+    if(setmessage.smaphide == 0) $("#smaphide").click();
+    if(setmessage.sbuildtable == 1) $("#smaphide").click();
+    if(setmessage.sporttable == 1) $("#smaphide").click();
+    if(setmessage.sspotsign == 1) $("#smaphide").click();
+    if(setmessage.senemypile == 1) $("#smaphide").click();
+    $("#missioninfo").html("");
   } else if (campaign == 2010) {
     showDefenseDrill(mission);
     $("#missioninfo").html("");
