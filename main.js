@@ -1655,37 +1655,38 @@ const generateEnemyTeamRow = (spot, enemy_team_id, spotAllyTeam, controllableAll
   var efect = 0;
   let hasFakeCeError = false;
   const matchingEnemyTeam = Enemy_team.find((team) => team.id == enemy_team_id);
-  /*-- 效能欺诈 --*/
-  if (matchingEnemyTeam.effect_ext != 0) {
-    efect = Math.abs(matchingEnemyTeam.effect_ext);
+  if (matchingEnemyTeam) {  
+	  /*-- 效能欺诈 --*/
+	  if (matchingEnemyTeam.effect_ext != 0) {
+		efect = Math.abs(matchingEnemyTeam.effect_ext);
 
-    // When using fake CE, the game client can display the incorrect CE... This is due to single-precision
-    // floating point errors.
-    const enemyUnitCount = Enemy_in_team_by_team_id[enemy_team_id].length;
-    const perUnitCE = Math.fround(efect / enemyUnitCount);
-    const clientTotal = Math.ceil([...Array(enemyUnitCount)].reduce((subtotal) => Math.fround(subtotal + perUnitCE), 0));
-    if (Math.ceil(clientTotal) > efect) {
-      hasFakeCeError = true;
-    }
+		// When using fake CE, the game client can display the incorrect CE... This is due to single-precision
+		// floating point errors.
+		const enemyUnitCount = Enemy_in_team_by_team_id[enemy_team_id].length;
+		const perUnitCE = Math.fround(efect / enemyUnitCount);
+		const clientTotal = Math.ceil([...Array(enemyUnitCount)].reduce((subtotal) => Math.fround(subtotal + perUnitCE), 0));
+		if (Math.ceil(clientTotal) > efect) {
+		  hasFakeCeError = true;
+		}
+	  }
+	  teamLeaderEnemyId = matchingEnemyTeam["enemy_leader"];
+	  rareDrops = [
+		...matchingEnemyTeam.limit_guns
+		  .split(",")
+		  .filter((id) => !!id && id !== "0")
+		  .map((id) => getGunName(id, /*excludeIdFromCnName=*/true)),
+		...matchingEnemyTeam.limit_equips
+		  .split(",")
+		  .filter((id) => !!id && id !== "0")
+		  .map((id) => getEquipName(id, /*excludeIdFromCnName=*/true)),
+	  ];
+	  // Mica didn't put Agent Vector and Agent 416's equips on the drop tables.
+	  if (matchingEnemyTeam.id == 6431007) {
+		rareDrops.push(getEquipName(199, /*excludeIdFromCnName=*/true));
+	  } else if (matchingEnemyTeam.id == 6431008) {
+		rareDrops.push(getEquipName(202, /*excludeIdFromCnName=*/true));
+	  }
   }
-  teamLeaderEnemyId = matchingEnemyTeam["enemy_leader"];
-  rareDrops = [
-    ...matchingEnemyTeam.limit_guns
-      .split(",")
-      .filter((id) => !!id && id !== "0")
-      .map((id) => getGunName(id, /*excludeIdFromCnName=*/true)),
-    ...matchingEnemyTeam.limit_equips
-      .split(",")
-      .filter((id) => !!id && id !== "0")
-      .map((id) => getEquipName(id, /*excludeIdFromCnName=*/true)),
-  ];
-  // Mica didn't put Agent Vector and Agent 416's equips on the drop tables.
-  if (matchingEnemyTeam.id == 6431007) {
-    rareDrops.push(getEquipName(199, /*excludeIdFromCnName=*/true));
-  } else if (matchingEnemyTeam.id == 6431008) {
-    rareDrops.push(getEquipName(202, /*excludeIdFromCnName=*/true));
-  }
-
   let teamID = "";
   let teamLeader = "";
   let teamAI = "";
@@ -2466,50 +2467,55 @@ function showDefenseDrill(mission) {
 
 function efectcal(enemy_team_id, levelOffset, armorCoef) {
   var efect = 0;
-  if (Number($("#campaignselect").val()) < 6000){
-    turn = $("#turnselect").val()
-    teamData = Enemy_team_map[enemy_team_id];
-    eval(`correction_turn={${teamData["correction_turn"]}}`)
-    levelOffset = correction_turn[Number(turn)] || 0
-  }
-  if (!Enemy_in_team_by_team_id[Number(enemy_team_id)]) {
-    return 0;
-  }
+  if (enemy_team_id != 0) {
+	  if (Number($("#campaignselect").val()) < 6000){
+		turn = $("#turnselect").val()
+		teamData = Enemy_team_map[enemy_team_id];
+		eval(`correction_turn={${teamData["correction_turn"]}}`)
+		levelOffset = correction_turn[Number(turn)] || 0
+	  }
+	  if (!Enemy_in_team_by_team_id[Number(enemy_team_id)]) {
+		return 0;
+	  }
 
-  Enemy_in_team_by_team_id[Number(enemy_team_id)].forEach(({enemy_character_type_id, level, number, def_percent}) => {
-    level = level+levelOffset
-    var charatype = Enemy_character_type_by_id[enemy_character_type_id];
-    if (!charatype) {
-      console.error(`Enemy_character_type id=${enemy_character_type_id} not found.`);
-      return;
-    }
+	  Enemy_in_team_by_team_id[Number(enemy_team_id)].forEach(({enemy_character_type_id, level, number, def_percent}) => {
+		level = level+levelOffset
+		var charatype = Enemy_character_type_by_id[enemy_character_type_id];
+		if (!charatype) {
+		  console.error(`Enemy_character_type id=${enemy_character_type_id} not found.`);
+		  return;
+		}
 
-    var attr_number = Number(number);
-    var attr_pow = enemyattribute(charatype , "pow" , level);
-    var attr_def_break = enemyattribute(charatype , "def_break" , level);
-    var attr_rate = enemyattribute(charatype , "rate" , level);
-    var attr_hit = enemyattribute(charatype , "hit" , level);
-    var attr_maxlife = enemyattribute(charatype , "maxlife" , level);
-    var attr_dodge = enemyattribute(charatype , "dodge" , level);
-    var attr_armor = enemyattribute(charatype , "armor" , level);
-    var attr_def = enemyattribute(charatype , "def" , level);
-    var attr_tenacity = enemyattribute(charatype , "tenacity", level);
-    var attr_def_percent = Number(def_percent);
-    /*-- 攻击：ceiling：22*扩编数*((pow + def_break*0.85) * rate/50 * hit/(hit+35) +2) --*/
-    var efect_att = ceiling(22*attr_number*((attr_pow + attr_def_break*0.85) * attr_rate/50 * attr_hit/(attr_hit+35) +2));
-    /*-- 防御：ceiling：0.25*(maxlife * (35+dodge)/35 * armorCoef/(armorCoef-armor) + 100) * (def_max*2-def+1200*2)/(def_max-def+1200) /2 --*/
-    var efect_def = ceiling(
-      0.25
-        * (bround(attr_number * attr_maxlife)
-             * (35+attr_dodge)/35 * armorCoef/(armorCoef-attr_armor)
-             * (/* MICAAAAAAAAAAAAAAAAAAAAAAA */ Math.trunc(attr_tenacity / 100) + 1.0 - 0.6/100)
-             + 100)
-        * (attr_def*2 - attr_def*attr_def_percent/100 + 1200*2)
-        / (attr_def - attr_def*attr_def_percent/100 + 1200)
-      / 2);
-    efect += ceiling(Number(charatype.effect_ratio) * (efect_att + efect_def));
-  });
-  return efect;
+		var attr_number = Number(number);
+		var attr_pow = enemyattribute(charatype , "pow" , level);
+		var attr_def_break = enemyattribute(charatype , "def_break" , level);
+		var attr_rate = enemyattribute(charatype , "rate" , level);
+		var attr_hit = enemyattribute(charatype , "hit" , level);
+		var attr_maxlife = enemyattribute(charatype , "maxlife" , level);
+		var attr_dodge = enemyattribute(charatype , "dodge" , level);
+		var attr_armor = enemyattribute(charatype , "armor" , level);
+		var attr_def = enemyattribute(charatype , "def" , level);
+		var attr_tenacity = enemyattribute(charatype , "tenacity", level);
+		var attr_def_percent = Number(def_percent);
+		/*-- 攻击：ceiling：22*扩编数*((pow + def_break*0.85) * rate/50 * hit/(hit+35) +2) --*/
+		var efect_att = ceiling(22*attr_number*((attr_pow + attr_def_break*0.85) * attr_rate/50 * attr_hit/(attr_hit+35) +2));
+		/*-- 防御：ceiling：0.25*(maxlife * (35+dodge)/35 * armorCoef/(armorCoef-armor) + 100) * (def_max*2-def+1200*2)/(def_max-def+1200) /2 --*/
+		var efect_def = ceiling(
+		  0.25
+			* (bround(attr_number * attr_maxlife)
+				 * (35+attr_dodge)/35 * armorCoef/(armorCoef-attr_armor)
+				 * (/* MICAAAAAAAAAAAAAAAAAAAAAAA */ Math.trunc(attr_tenacity / 100) + 1.0 - 0.6/100)
+				 + 100)
+			* (attr_def*2 - attr_def*attr_def_percent/100 + 1200*2)
+			/ (attr_def - attr_def*attr_def_percent/100 + 1200)
+		  / 2);
+		efect += ceiling(Number(charatype.effect_ratio) * (efect_att + efect_def));
+	  });
+	  return efect;
+  }
+  else {
+	  return 0;
+  }
 }
 
 const theaterCeCalc = (enemyTeamId, offsets, armorCoef) => {
