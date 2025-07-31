@@ -692,6 +692,8 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -74: return 3074;
 	// Roche Limit;
 	case -75: return 3075;
+	// Virtual Pair;
+	case -76: return 3076;
 	// Grey Zone, edited to split GZ1-4 separately
     case -4041: return 2011; // GZ1
 	case -4042: return 2012; // GZ2
