@@ -37,6 +37,7 @@ var Item;
 var Gift_item;
 var Prize;
 var Daily_mission_group;
+var Mission_win_type_config;
 
 var Mission_txt, Mission_cn_txt;
 var Enemy_charater_type_txt, Enemy_charater_type_cn_txt;
@@ -51,6 +52,7 @@ var Special_spot_config_txt, Special_spot_config_cn_txt;
 var Fairy_txt, Fairy_cn_txt;
 var Item_txt, Item_cn_txt;
 var Gift_item_txt, Gift_item_cn_txt;
+var Mission_win_type_config_txt, Mission_win_type_config_cn_txt;
 
 var UI_TEXT = {};
 var INSTRUCTIONS = "";
@@ -440,7 +442,8 @@ const loadData = async () => {
     "Skin": loadStcFile(`skin.json`).then((result) => Skin = result),
     "Commander_uniform": loadStcFile(`commander_uniform.json`).then((result) => Commander_uniform = result),
     "Daily_mission_group": loadStcFile(`daily_mission_group.json`).then((result) => Daily_mission_group = result),
-    
+    "Mission_win_type_config": loadStcFile(`mission_win_type_config.json`).then((result) => Mission_win_type_config = result),
+	
 	"equip_in_ally_info": loadCatchFile(`equip_in_ally_info.json`).then((result) => equip_in_ally_info = result["equip_in_ally_info"]),
     "trial_info": loadCatchFile(`trial_info.json`).then((result) => trial_info = result["trial_info"]),
 	"Mission_event_prize_info": loadCatchFile(`mission_event_prize_info.json`).then((result) => Mission_event_prize_info = result["mission_event_prize_info"]),
@@ -495,6 +498,8 @@ const loadData = async () => {
 	"Skin_cn_txt": loadCnTextTable(`skin.json`).then((result) => Skin_cn_txt = result),
 	"Commander_uniform_txt": loadTextTable(`commander_uniform.json`).then((result) => Commander_uniform_txt = result),
 	"Commander_uniform_cn_txt": loadCnTextTable(`commander_uniform.json`).then((result) => Commander_uniform_cn_txt = result),
+	"Mission_win_type_config_txt": loadTextTable(`mission_win_type_config.json`).then((result) => Mission_win_type_config_txt = result),
+	"Mission_win_type_config_cn_txt": loadCnTextTable(`mission_win_type_config.json`).then((result) => Mission_win_type_config_cn_txt = result),
 
     "INSTRUCTIONS": loadTextFile(`./text/${config.langCode}/instructions.html`).then((result) => INSTRUCTIONS = result),
     
@@ -1051,7 +1056,6 @@ function updatemap() {
     let baseExperience = mission_info.exp_parameter * 10;
 
 	let clearRewards = '';
-	
 	const mission_prize = Mission_event_prize_info.filter(mission_event_prize_info => Number(mission_event_prize_info.mission_id) == mission_info.id)[0];
 	const prize_id = mission_prize ? mission_prize.prize_id : null;
 	const prize_info = prize_id ? Prize.filter(prize => prize.id == prize_id)[0] : null;
@@ -1076,6 +1080,117 @@ function updatemap() {
 		].filter(Boolean).join(', ');
 	};
 	
+	const clearConditionsArr = [];
+	if (mission_info.win_turn != 0) {
+		clearConditionsArr.push('Survive to turn ' + mission_info.win_turn);
+	}
+	else if (mission_info.win_spot_id != '0' && mission_info.win_spot_id != '') {
+		clearConditionsArr.push('Capture node ' + mission_info.win_spot_id);
+	}
+	else if (mission_info.win_type != '') {
+		const winTypesRaw = mission_info.win_type.split('|');
+		const winTypes = winTypesRaw.map(x => x.split(','));
+		
+		for (let i = 0; i < winTypes.length; i++) {
+			const winType = winTypes[i];
+			
+			const winTypeTempArr = [];
+			for (let j = 0; j < winType.length; j++) {
+				winTypeConfig = Mission_win_type_config.filter(x => x.id == winType[j])[0];
+				
+				if (winTypeConfig.type == 1102 && winTypeConfig.arguments == 1) {
+					winTypeTempArr.push('Capture enemy HQ');
+				}
+				else if (winTypeConfig.type == 1102 && winTypeConfig.arguments == 3) {
+					winTypeTempArr.push('Capture all Heliports');
+				}
+				else if (winTypeConfig.type == 1106) {
+					winTypeTempArr.push('Capture ' + (winTypeConfig.arguments == 9999 ? 'all' : winTypeConfig.arguments) +  ' 	nodes');
+				}
+				else if (winTypeConfig.type == 1305) {
+					winTypeTempArr.push('Eliminate all enemies');
+				}
+				else if (winTypeConfig.type == 1310) {
+					winTypeTempArr.push('Eliminate all Third Party enemies');
+				}				
+				else if (winTypeConfig.type == 1404) {
+					winTypeTempArr.push('Rescue ' + winTypeConfig.arguments + ' hostages');
+				}	
+				else if (winTypeConfig.type == 2302) {
+					winTypeTempArr.push('Eliminate no more than ' + winTypeConfig.arguments + ' enemies');
+				}	
+				else if (winTypeConfig.type == 2403) {
+					winTypeTempArr.push('No more than ' + winTypeConfig.arguments + ' echelons retreat');
+				}	
+				else if (winTypeConfig.type == 1405) {
+					winTypeTempArr.push('Maintain the supply line for ' + winTypeConfig.arguments + ' turns');
+				}
+				else if (winTypeConfig.type == 1303) {
+					winTypeTempArr.push('Kill enemy ' + winTypeConfig.arguments.replaceAll('|',' or ').replaceAll(',', ' and ').replaceAll(':', ' x'));
+				}
+				else if (winTypeConfig.type == 1101) {
+					winTypeTempArr.push('Occupy node ' + winTypeConfig.arguments.replaceAll('|',' or ').replaceAll(',', ' and '));
+				}
+				else if (winTypeConfig.type == 1402) {
+					winTypeTempArr.push('Reach turn ' + winTypeConfig.arguments);
+				}
+				else if (winTypeConfig.type == 1309) {
+					winTypeTempArr.push('Lead NPC ' + winTypeConfig.arguments.replace(',', ' to node '));
+				}
+				else if (winTypeConfig.type == 1103) {
+					winTypeTempArr.push(
+					'Capture ' + winTypeConfig.arguments.split(':')[1] + ' '
+					+ {
+						1: 'HQ',
+						2: 'Normal',
+						3: 'Heliport',
+						5: 'Crate',
+						7: 'Heavy Heliport',
+						201: 'Radar'
+					}[winTypeConfig.arguments.split(':')[0]]
+					+ ' nodes');	
+				}
+				else if (winTypeConfig.type == 1401) {
+					winTypeTempArr.push('Within ' + winTypeConfig.arguments + ' turns');	
+				}
+				else if (winTypeConfig.type == 1301) {
+					winTypeTempArr.push('Eliminate at least ' + winTypeConfig.arguments + ' enemies');	
+				}
+				else if (winTypeConfig.type == 1207) {	
+					winTypeTempArr.push(winTypeConfig.arguments.split(',').map(x => ({
+					  1: 'Move',
+					  2: 'Destroy',
+					  4: 'Do not use'
+					})[x.split(':')[1]] + ' building ' +  x.split(':')[0]).join(', '));
+				}
+				else if (winTypeConfig.type == 1208) {
+					winTypeTempArr.push('Use building ' + winTypeConfig.arguments);	
+				}
+				else if (winTypeConfig.type == 1209 && winTypeConfig.arguments == '1:1:14') {
+					winTypeTempArr.push('Activate detonator');	
+				}
+				else if (winTypeConfig.type == 1209 && winTypeConfig.arguments == '4:3:6') {
+					winTypeTempArr.push('Open all defense gates');	
+				}
+				else if (winTypeConfig.type == 1306) {
+					winTypeTempArr.push('Defeat enemy ' + winTypeConfig.arguments);	
+				}
+				else if (winTypeConfig.type == 1205) {
+					winTypeTempArr.push('Demolish building ' + winTypeConfig.arguments.split(':')[0]);	
+				}
+				else if (winTypeConfig.type == 1206) {
+					winTypeTempArr.push('Do not demolish buliding ' + winTypeConfig.arguments.split(':')[0]);	
+				}
+				else {
+					winTypeTempArr.push(Mission_win_type_config_txt[winTypeConfig.extra_language] ?? Mission_win_type_config_cn_txt[winTypeConfig.extra_language]);
+				}
+			}
+			clearConditionsArr.push(winTypeTempArr.join('; '));
+		}
+	}
+	const clearConditions = clearConditionsArr.join('<br>or<br>');
+	console.log('Win turn:', mission_info.win_turn, 'Win spot:', mission_info.win_spot_id, 'Win type:', mission_info.win_type, 'Win condition:', clearConditions); 
+	
 	let tableBody = "";
     let notes = [];
 
@@ -1095,6 +1210,7 @@ function updatemap() {
            <th>${UI_TEXT["mission_info_level_penalty"]}</th>
            <th>${UI_TEXT["mission_info_base_exp"]}</th>
 		   <th>${UI_TEXT["mission_clear_rewards"]}</th>
+		   <th>${UI_TEXT["mission_clear_conditions"]}</th>
          </tr></thead>
          <tbody>
            <tr>
@@ -1110,6 +1226,7 @@ function updatemap() {
              <td>${levelPenalty}</td>
              <td>${baseExperience}</td>
 			 <td>${clearRewards}</td>
+			 <td>${clearConditions}</td>
            </tr>
            <tr>
              <td>>= 350,000</td>
@@ -1158,6 +1275,7 @@ function updatemap() {
            <th>${UI_TEXT["mission_info_level_penalty"]}</th>
            <th>${UI_TEXT["mission_info_base_exp"]}</th>
 		   <th>${UI_TEXT["mission_clear_rewards"]}</th>
+		   <th>${UI_TEXT["mission_clear_conditions"]}</th>
          </tr></thead>
          <tbody><tr>
            <td>${mission_info.special_type > 0 ? UI_TEXT["mission_info_environment_night"] : UI_TEXT["mission_info_environment_day"]}</td>
@@ -1171,6 +1289,7 @@ function updatemap() {
            <td>${levelPenalty}</td>
            <td>${baseExperience}</td>
 		   <td>${clearRewards}</td>
+		   <td>${clearConditions}</td>
          </tr></tbody>`;
     }
     

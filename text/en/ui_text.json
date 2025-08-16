@@ -141,6 +141,7 @@
   "mission_info_level_penalty": "Level Penalty",
   "mission_info_base_exp": "Base Exp",
   "mission_clear_rewards": "Clear Rewards",
+  "mission_clear_conditions": "Clear Conditions (BETA)",
 
   "building_location": "Location",
   "building_id": "ID",
