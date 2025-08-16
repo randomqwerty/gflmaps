@@ -1098,8 +1098,18 @@ function updatemap() {
 			for (let j = 0; j < winType.length; j++) {
 				winTypeConfig = Mission_win_type_config.filter(x => x.id == winType[j])[0];
 				
-				if (winTypeConfig.type == 1102 && winTypeConfig.arguments == 1) {
-					winTypeTempArr.push('Capture enemy HQ');
+				if (winTypeConfig.type == 1102) {
+					winTypeTempArr.push(
+					'Capture all ' 
+					+ {
+						1: 'HQ',
+						2: 'Normal',
+						3: 'Heliport',
+						5: 'Crate',
+						7: 'Heavy Heliport',
+						201: 'Radar'
+					}[winTypeConfig.arguments]
+					+ ' nodes');	
 				}
 				else if (winTypeConfig.type == 1102 && winTypeConfig.arguments == 3) {
 					winTypeTempArr.push('Capture all Heliports');
