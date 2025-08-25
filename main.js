@@ -1098,7 +1098,10 @@ function updatemap() {
 			for (let j = 0; j < winType.length; j++) {
 				winTypeConfig = Mission_win_type_config.filter(x => x.id == winType[j])[0];
 				
-				if (winTypeConfig.type == 1102) {
+				if (!winTypeConfig) {
+					winTypeTempArr.push('');
+				}
+				else if (winTypeConfig.type == 1102) {
 					winTypeTempArr.push(
 					'Capture all ' 
 					+ {
