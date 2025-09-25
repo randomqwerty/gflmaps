@@ -260,7 +260,7 @@ const calculateSuspectedSpawns = () => {
   
   let lastMissionId = null;
   Enemy_team.forEach((enemyTeam) => {
-    if (enemyTeam.id >= 700000 && enemyTeam.id < 800000) {
+    if (enemyTeam.id >= 700000 && enemyTeam.id < 800000 && (enemyTeam.id < 770000 || enemyTeam.id > 770100) ) {
       return;
     }
     if (enemyTeam.id >= 800000 && enemyTeam.id < 820000) {
