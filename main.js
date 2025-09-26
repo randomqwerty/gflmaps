@@ -260,7 +260,7 @@ const calculateSuspectedSpawns = () => {
   
   let lastMissionId = null;
   Enemy_team.forEach((enemyTeam) => {
-    if (enemyTeam.id >= 700000 && enemyTeam.id < 800000 && (enemyTeam.id < 770000 || enemyTeam.id > 770100) ) {
+    if ((enemyTeam.id >= 700000 && enemyTeam.id < 770000) || (enemyTeam.id > 770099 && enemyTeam.id < 800000)) {
       return;
     }
     if (enemyTeam.id >= 800000 && enemyTeam.id < 820000) {
@@ -279,6 +279,9 @@ const calculateSuspectedSpawns = () => {
     }
   });
 
+  // Silent Sandbox bandaid fix
+  missionIdToSuspectedSpawns[11946] = missionIdToSuspectedSpawns[11946].filter(n => Math.floor(n / 100) === 7700);
+  
   // AW+ spawns.
   missionIdToSuspectedSpawns[10105] = [...new Set([
     ...(missionIdToSuspectedSpawns[10105] || []),
@@ -699,7 +702,7 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -75: return 3075;
 	// Virtual Pair;
 	case -76: return 3076;
-	// Silent Sandbox
+	// Quantum Fluctuation / Silent Sandbox
 	case -77: return 3077;
 	// Grey Zone, edited to split GZ1-4 separately
     case -4041: return 2011; // GZ1
