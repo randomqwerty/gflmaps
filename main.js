@@ -138,6 +138,12 @@ const wellKnownEnemyCodes = new Set([
   "Nyto_White_Commander",
   "Cerberus_White",
   "Teal",
+  "Cerynitis_Deutsch",
+  "Hydra_Deutsch",
+  "Coeus_Deutsch",
+  "AA02_Mini_Deutsch",
+  "Chariot_Military_Deutsch",
+  "Aegis_GA_Deutsch",
 ]);
 
 // CHANGES FROM GFWIKI: For most data, if the asset text file does not contain a name or the name is blank,
@@ -2602,8 +2608,10 @@ function showDefenseDrill(mission) {
   });
 }
 
-function efectcal(enemy_team_id, levelOffset, armorCoef) {
+function efectcal(enemy_team_id, levelOffset, armorCoef, detail = false) {
   var efect = 0;
+  var indiv_efect = 0;
+  var efect_details = {};
   if (enemy_team_id != 0) {
 	  if (Number($("#campaignselect").val()) < 6000){
 		turn = $("#turnselect").val()
@@ -2612,10 +2620,10 @@ function efectcal(enemy_team_id, levelOffset, armorCoef) {
 		levelOffset = correction_turn[Number(turn)] || 0
 	  }
 	  if (!Enemy_in_team_by_team_id[Number(enemy_team_id)]) {
-		return 0;
+		return detail ? {} : 0;
 	  }
 
-	  Enemy_in_team_by_team_id[Number(enemy_team_id)].forEach(({enemy_character_type_id, level, number, def_percent}) => {
+	  Enemy_in_team_by_team_id[Number(enemy_team_id)].forEach(({id, enemy_character_type_id, level, number, def_percent}) => {
 		level = level+levelOffset
 		var charatype = Enemy_character_type_by_id[enemy_character_type_id];
 		if (!charatype) {
@@ -2646,12 +2654,16 @@ function efectcal(enemy_team_id, levelOffset, armorCoef) {
 			* (attr_def*2 - attr_def*attr_def_percent/100 + 1200*2)
 			/ (attr_def - attr_def*attr_def_percent/100 + 1200)
 		  / 2);
-		efect += ceiling(Number(charatype.effect_ratio) * (efect_att + efect_def));
+		indiv_efect = ceiling(Number(charatype.effect_ratio) * (efect_att + efect_def))
+		efect += indiv_efect;
+		if (detail) {
+			efect_details[id] = indiv_efect;
+		}
 	  });
-	  return efect;
+	  return detail ? efect_details : efect;
   }
   else {
-	  return 0;
+	  return detail ? {} : 0;
   }
 }
 
@@ -3014,10 +3026,11 @@ function enemydisplay(enemy_team_id){
           <th>${UI_TEXT["enemy_forceshield_initial_pct"]}<\/th>
           <th>${UI_TEXT["enemy_coordinates"]}<\/th>
 		  <th>${UI_TEXT["enemy_character_type"]}<\/th>
+		  <th>${UI_TEXT["enemy_individual_ce"]}<\/th>
         <\/tr><\/thead>
         <tbody id="Eenmybody">`;
 
-      Enemy_in_team_by_team_id[Number(enemy_team_id)].forEach(({enemy_character_type_id, level, number, def_percent, coordinator_x, coordinator_y}) => {
+      Enemy_in_team_by_team_id[Number(enemy_team_id)].forEach(({id, enemy_character_type_id, level, number, def_percent, coordinator_x, coordinator_y}) => {
         /*-- 敌人type 基础属性/当前属性 --*/
         var charatype = Enemy_character_type_by_id[enemy_character_type_id];
 
@@ -3108,7 +3121,8 @@ function enemydisplay(enemy_team_id){
         thisline += displayedValues.def + `<\/td><td class="enemycell" index="17">`;
         thisline += Number(def_percent) + `%<\/td><td class="enemycell" index="18">`;
         thisline += "(" + coordinator_x + "," + coordinator_y + `)<\/td><td class="enemycell" index="19">`;
-        thisline += Number(enemy_character_type_id) + `<\/td><\/tr>`;
+        thisline += Number(enemy_character_type_id) + `<\/td><td class="enemycell" index="20">`;
+        thisline += Number(efectcal(enemy_team_id, 0, 600, true)[id]) + `<\/td><\/tr>`;
 		
         output += thisline;
 
