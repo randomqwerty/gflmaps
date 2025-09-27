@@ -2798,7 +2798,7 @@ function enemyattribute(charatype , attr , level){
     var normalattr = Number(charatype[attr]);
     var normallevel = Number(charatype["level"]);
     if(!Enemy_standard_attribute[0][attr]) return bround(normalattr);
-    else if(attr == "def" && normalattr == 99999) return 0;
+    //else if(attr == "def" && normalattr == 99999) return 0; // Commenting out to match ingame CEs (ex: ID 45010001 Nyto boss from CT+)
 
     var thislevelfactor;
     for(var i = 0; i < Enemy_standard_attribute.length; i++){
