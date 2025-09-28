@@ -122,22 +122,10 @@ let theaterAreaToLevelAdjustments = {};
 let defDrillTeamsToLevels = {};
 
 const wellKnownEnemyCodes = new Set([
-  "Punish",
-  "Visjnoe",
-  "Cherub",
-  "Obelisk_partB",
-  "Obelisk_partA",
-  "Riotguard",
-  "Metalmax",
-  //"Executioner",
-  //"Grenadier",
-  "Mastersergeant",
   "Nyto_Black_SMG",
   "Nyto_Black_Hammer",
   "Nyto_Black_RF",
   "Nyto_White_Commander",
-  "Cerberus_White",
-  "Teal",
   "Cerynitis_Deutsch",
   "Hydra_Deutsch",
   "Coeus_Deutsch",
@@ -180,7 +168,9 @@ function trans() {
       if (wellKnownEnemyCodes.has(Enemy_charater_type[i].code)) {
         // Certain enemies are known by their codes longer than their localized names, so their codes are
         // added back for clarification.
-        Enemy_charater_type[i].name = `[${Enemy_charater_type[i].code}] ${namestr}`;
+        //Enemy_charater_type[i].name = `[${Enemy_charater_type[i].code}] ${namestr}`;
+        // 09-27-2025: shortened enemy list and only using the codes instead of both the code and localized name
+        Enemy_charater_type[i].name = `${Enemy_charater_type[i].code}`;
       } else if (Enemy_charater_type[i].code.match(/swap/i) && !Enemy_charater_type[i].name.match(/swap/i)) {
         // Add " [SWAP]" at the end of the name if the enemy code contains "SWAP" but the name does not.
         // This is because the official English localization sometimes just omits this qualifier...
