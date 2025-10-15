@@ -62,14 +62,17 @@ const spotPaths = [
   "random_belong1.png",
   "random_belong2.png",
   "random_belong3.png",
+  "random_belong99.png",
   "spot1_belong1.png",
   "spot1_belong0.png",
   "spot1_belong2.png",
   "spot1_belong3.png",
+  "spot1_belong99.png",
   "spot2_belong0.png",
   "spot2_belong1.png",
   "spot2_belong2.png",
   "spot2_belong3.png",
+  "spot2_belong99.png",
   "spot3_belong0.png",
   "spot3_belong0_closed.png",
   "spot3_belong1.png",
@@ -78,18 +81,23 @@ const spotPaths = [
   "spot3_belong2_closed.png",
   "spot3_belong3.png",
   "spot3_belong3_closed.png",
+  "spot3_belong99.png",
+  "spot3_belong99_closed.png",
   "spot4_belong0.png",
   "spot4_belong1.png",
   "spot4_belong2.png",
   "spot4_belong3.png",
+  "spot4_belong99.png",
   "spot5_belong0.png",
   "spot5_belong1.png",
   "spot5_belong2.png",
   "spot5_belong3.png",
+  "spot5_belong99.png",
   "spot6_belong0.png",
   "spot6_belong1.png",
   "spot6_belong2.png",
   "spot6_belong3.png",
+  "spot6_belong99.png",
   "spot7_belong0.png",
   "spot7_belong0_closed.png",
   "spot7_belong1.png",
@@ -98,10 +106,13 @@ const spotPaths = [
   "spot7_belong2_closed.png",
   "spot7_belong3.png",
   "spot7_belong3_closed.png",
+  "spot7_belong99.png",
+  "spot7_belong99_closed.png",
   "spot8_belong0.png",
   "spot8_belong1.png",
   "spot8_belong2.png",
   "spot8_belong3.png",
+  "spot8_belong99.png",
 ];
 
 // As of DR/Division/MS (up to client 2.07), if an allied team is controllable,
@@ -2226,7 +2237,7 @@ function drawmap(func){
       }
       
       let belong = dspot[i].belong;
-      if (belong > 3) {
+      if (belong > 3 && belong != 99) {
         belong = 3;
       }
       let spotFilename = null;
