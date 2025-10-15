@@ -2169,8 +2169,8 @@ function drawmap(func){
               var y2 = Number(dspot[i2].coordinator_y);
 
               /*--  双向路径的绘制  --*/
-			  con.lineWidth = String(30 / coparameter);
-			  con.strokeStyle = "#cecece";
+              con.lineWidth = String(30 / coparameter);
+              con.strokeStyle = (dspot[i].belong == 99 || dspot[i2].belong == 99 ? "#898989" : "#cecece");
               con.lineWidth = String(coorchange(3, 30));
               con.beginPath();
               con.moveTo(coorchange(1, x1, x_min), coorchange(2, y1, y_min));
@@ -2201,7 +2201,7 @@ function drawmap(func){
         const numArrows = Math.floor(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)) / arrowStep);
 
         con.lineWidth = String(coorchange(3, 10));
-        con.strokeStyle = "#cecece";
+        con.strokeStyle = (dspot[singlespot[i].a1].belong == 99 || dspot[singlespot[i].a2].belong == 99 ? "#898989" : "#cecece");
         con.lineCap = "square";
         for (let i = 0; i < numArrows; i++) {
           // The real game has 3 arrows grouped together.
