@@ -287,7 +287,9 @@ const calculateSuspectedSpawns = () => {
   });
 
   // Silent Sandbox bandaid fix
-  missionIdToSuspectedSpawns[11946] = missionIdToSuspectedSpawns[11946].filter(n => Math.floor(n / 100) === 7700);
+  if (missionIdToSuspectedSpawns[11946]) {
+	missionIdToSuspectedSpawns[11946] = missionIdToSuspectedSpawns[11946].filter(n => Math.floor(n / 100) === 7700);
+  }
   
   // AW+ spawns.
   missionIdToSuspectedSpawns[10105] = [...new Set([
@@ -711,7 +713,7 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -76: return 3076;
 	// Silent Sandbox
 	case -77: return 3077;
-	// Quantum Fluctuation / Silent Sandbox
+	// Quantum Fluctuation / Zero Tide
 	case -78: return 3078;
 	// Grey Zone, edited to split GZ1-4 separately
     case -4041: return 2011; // GZ1
