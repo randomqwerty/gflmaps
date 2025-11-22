@@ -705,8 +705,9 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -72: return 3072;
 	// Arena Breakout Collab;
 	case -73: return 4073
-	// Convolutional Kernel;
+	// Convolutional Kernel and Convolutional Kernel Perma Ranking;
 	case -74: return 3074;
+	case -40404: return 3074;	
 	// Roche Limit;
 	case -75: return 3075;
 	// Virtual Pair;
