@@ -776,7 +776,13 @@ function getMissionOptionsForCampaign(campaign) {
   else if(campaign >= 1000 && campaign < 2000){
       for (i in Mission) {
           if ((Mission[i].campaign == campaign - 1000) && (Mission[i].if_emergency != 2)) {
-              var innerHTML = String(campaign - 1000) + "-" + Mission[i].sub;
+              var innerHTML = "";
+              if (Mission[i].campaign == 14) {
+                innerHTML = "A-" + Mission[i].sub;
+              }
+              else {
+                innerHTML = String(campaign - 1000) + "-" + Mission[i].sub;
+              }
               innerHTML += (Mission[i].if_emergency == 1) ? "E " : (Mission[i].if_emergency == 3) ? "N " : " ";
               innerHTML += Mission[i].name.replace("//n", " ");
               missionOptions.push({
