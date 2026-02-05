@@ -716,6 +716,8 @@ function convertGameCampaignToUiCampaign(gameCampaign) {
 	case -77: return 3077;
 	// Quantum Fluctuation / Zero Tide
 	case -78: return 3078;
+	// Steel Rain Salute
+	case -79: return 3079;
 	// Grey Zone, edited to split GZ1-4 separately
     case -4041: return 2011; // GZ1
 	case -4042: return 2012; // GZ2
