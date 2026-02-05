@@ -292,10 +292,10 @@ const calculateSuspectedSpawns = () => {
   }
   
   // Steel Rain Salute bandaid fix
-  if (missionIdToSuspectedSpawns[11988]) {
-	missionIdToSuspectedSpawns[11988] = missionIdToSuspectedSpawns[11988].filter(n => Math.floor(n / 100) === 8002);
-  }
-  
+  missionIdToSuspectedSpawns[11988] = [...new Set([
+    ...(missionIdToSuspectedSpawns[11988] || []),
+    800201,800202,800203,800204,800205,800214,800215,800216,800217,800218,800219,800220,800221,800222,800223,800224,800225,800226,800227,800228,800229,800230,800231,800232,800233,800234,800235,800236,800237,800238,800239,800240,800241,800242,800243,800244,800245,800246,800247,800248,800249,800250
+  ])];
   // AW+ spawns.
   missionIdToSuspectedSpawns[10105] = [...new Set([
     ...(missionIdToSuspectedSpawns[10105] || []),
