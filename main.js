@@ -291,6 +291,11 @@ const calculateSuspectedSpawns = () => {
 	missionIdToSuspectedSpawns[11946] = missionIdToSuspectedSpawns[11946].filter(n => Math.floor(n / 100) === 7700);
   }
   
+  // Steel Rain Salute bandaid fix
+  if (missionIdToSuspectedSpawns[11988]) {
+	missionIdToSuspectedSpawns[11988] = missionIdToSuspectedSpawns[11988].filter(n => Math.floor(n / 100) === 8002);
+  }
+  
   // AW+ spawns.
   missionIdToSuspectedSpawns[10105] = [...new Set([
     ...(missionIdToSuspectedSpawns[10105] || []),
