@@ -33,6 +33,7 @@ var Team_ai;
 var Mission_targettrain_enemy;
 var Mission_event_prize_info;
 var Fairy;
+var Fairy_in_ally;
 var Item;
 var Gift_item;
 var Prize;
@@ -479,6 +480,7 @@ const loadData = async () => {
     "Sangvis": loadStcFile(`sangvis.json`).then((result) => Sangvis = result),
     "Sangvis_in_ally": loadStcFile(`sangvis_in_ally.json`).then((result) => Sangvis_in_ally = result),
     "Fairy": loadStcFile(`fairy.json`).then((result) => Fairy = result),
+	"Fairy_in_ally": loadStcFile(`fairy_in_ally.json`).then((result) => Fairy_in_ally = result),
     "Item": loadStcFile(`item.json`).then((result) => Item = result),
     "Gift_item": loadStcFile(`gift_item.json`).then((result) => Gift_item = result),
     "Prize": loadStcFile(`prize.json`).then((result) => Prize = result),
@@ -2985,10 +2987,10 @@ function enemydisplay(enemy_team_id){
       const spotAllyTeam = Ally_team.find(team => team.id == allyTeamId);
 	  
       let allyFairy = "";
-		if (spotAllyTeam.fairy != 0) {
-		  allyFairy = Fairy_txt[Fairy.filter(fairy => fairy.id == spotAllyTeam.fairy)[0].name] ?? Fairy_cn_txt[Fairy.filter(fairy => fairy.id == spotAllyTeam.fairy)[0].name]
-		};
-	  
+	  const fairyInAlly = Fairy_in_ally.find(f => f.id == spotAllyTeam.fairy);
+	  const fairy = fairyInAlly ? Fairy.find(f => f.id == fairyInAlly.fairy_id) : null;
+	  allyFairy = fairy ? (Fairy_txt[fairy.name] ?? Fairy_cn_txt[fairy.name]) : "";
+  
       if (spotAllyTeam.guns) {
         const guns = getAllyGuns(spotAllyTeam.guns.split(",").filter(id => !!id));
         const gunsRowsHtml = guns.map(gun => {
