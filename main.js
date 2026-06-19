@@ -985,11 +985,15 @@ const getAllyGuns = (gunInAllyIds) =>
       criticalPercent: gun.crit,
       armor: gun.ratio_armor,
     }, gun.eat_ratio, {
-      level: gunInAllyRow.level,
+      level: gunInAllyRow.gun_level,
       dummyLink: gunInAllyRow.number,
       favor: 50,
       growth: false
     });
+	
+	// Manually calculating recovery since it is not in gfcore
+	baseStats.rec = Math.ceil((5+(gunInAllyRow.gun_level-1)*0.05)*1.71*gun.ratio_rec/100);
+	
     // The stats here might have rounding errors due to the game zealously applying ceil/floor to every result
     // in a specific order.
     const approxStats = {
@@ -998,6 +1002,7 @@ const getAllyGuns = (gunInAllyIds) =>
       rate: baseStats.rate + gunInAllyRow.rate,
       hit: Math.floor(0.95 * (baseStats.hit + gunInAllyRow.hit)),
       dodge: Math.floor(0.95 * (baseStats.dodge + gunInAllyRow.dodge)),
+	  rec: baseStats.rec + gunInAllyRow.rec,
     };
 
     const equips = [gunInAllyRow.equip1, gunInAllyRow.equip2, gunInAllyRow.equip3]
@@ -2918,9 +2923,14 @@ function enemydisplay(enemy_team_id){
     if (allyTeamMatch) {
       const allyTeamId = Number(allyTeamMatch[1]);
       const spotAllyTeam = Ally_team.find(team => team.id == allyTeamId);
+	  
+      let allyFairy = "";
+		if (spotAllyTeam.fairy != 0) {
+		  allyFairy = Fairy_txt[Fairy.filter(fairy => fairy.id == spotAllyTeam.fairy)[0].name] ?? Fairy_cn_txt[Fairy.filter(fairy => fairy.id == spotAllyTeam.fairy)[0].name]
+		};
+	  
       if (spotAllyTeam.guns) {
         const guns = getAllyGuns(spotAllyTeam.guns.split(",").filter(id => !!id));
-
         const gunsRowsHtml = guns.map(gun => {
           const equips = gun.equips.length ? gun.equips.map(equip => getEquipName(equip.equip_id)).join(",") : UI_TEXT["ally_no_equipment"];
           return `<tr class="enemyline" style="border-bottom:2px #f4c43033 solid;">
@@ -2932,8 +2942,14 @@ function enemydisplay(enemy_team_id){
              <td class="enemycell" index="6" width="59px">${gun.approxStats.rate}<\/td>
              <td class="enemycell" index="7" width="59px">${gun.approxStats.hit}<\/td>
              <td class="enemycell" index="8" width="59px">${gun.approxStats.dodge}<\/td>
-             <td class="enemycell" index="9" width="453px">${equips}<\/td>
-             <td class="enemycell" index="10" width="100px">${gun.numpadPosition}<\/td><\/tr>`
+			 <td class="enemycell" index="9" width="59px">${gun.approxStats.rec}<\/td>
+             <td class="enemycell" index="10" width="453px">${equips}<\/td>
+             <td class="enemycell" index="11" width="100px">${gun.numpadPosition}<\/td>
+			 <td class="enemycell" index="12" width="100px">${allyFairy}<\/td>
+			 <td class="enemycell" index="13" width="100px">${gun.gunInAllyRow.skill1}<\/td>
+			 <td class="enemycell" index="14" width="100px">${gun.gunInAllyRow.skill2}<\/td>
+			 <td class="enemycell" index="15" width="100px">${gun.gunInAllyRow.id}<\/td>
+			 <td class="enemycell" index="16" width="100px">${gun.gunInAllyRow.gun_id}<\/td><\/tr>`
         }).join("");
 
         output = `
@@ -2950,8 +2966,14 @@ function enemydisplay(enemy_team_id){
               <th>${UI_TEXT["ally_rof"]}<\/th>
               <th>${UI_TEXT["ally_acc"]}<\/th>
               <th>${UI_TEXT["ally_eva"]}<\/th>
+			  <th>${UI_TEXT["ally_rec"]}<\/th>
               <th>${UI_TEXT["ally_equipment"]}<\/th>
               <th>${UI_TEXT["ally_position"]}<\/th>
+			  <th>${UI_TEXT["ally_fairy"]}<\/th>
+			  <th>${UI_TEXT["ally_skill1"]}<\/th>
+			  <th>${UI_TEXT["ally_skill2"]}<\/th>
+			  <th>${UI_TEXT["ally_gun_in_ally_id"]}<\/th>
+			  <th>${UI_TEXT["ally_gun_id"]}<\/th>
             <\/tr><\/thead>
             <tbody id="Eenmybody">
               ${gunsRowsHtml}
