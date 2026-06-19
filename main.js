@@ -129,6 +129,7 @@ const spotPaths = [
 const controllableAllyTeamRegex = /2([01])([01])(0|1:(\d+),(\d+))/;
 
 let missionIdToSuspectedSpawns = {};
+let missionIdToSuspectedAllyTeams = {};
 let theaterAreaToLevelAdjustments = {};
 let defDrillTeamsToLevels = {};
 
@@ -316,6 +317,32 @@ const calculateSuspectedSpawns = () => {
     ...(missionIdToSuspectedSpawns[1603] || []),
     940011,940012,940013,940014,940015
   ])];
+  
+  // PR+ M4A1? NPC
+  //missionIdToSuspectedAllyTeams[11630] = [670101];
+};
+
+const calculateSuspectedAllyTeams = () => {
+  missionIdToSuspectedAllyTeams = {};
+
+  let allyTeamIdToMissionId = {};
+  Spot.forEach((spot) => {
+    if (spot.ally_team_id && !(spot.ally_team_id in allyTeamIdToMissionId)) {
+      allyTeamIdToMissionId[spot.ally_team_id] = spot.mission_id;
+    }
+  });
+
+  let lastMissionId = null;
+  Ally_team.forEach((allyTeam) => {
+    if (allyTeam.id in allyTeamIdToMissionId) {
+      lastMissionId = allyTeamIdToMissionId[allyTeam.id];
+    } else if (lastMissionId) {
+      if (!(lastMissionId in missionIdToSuspectedAllyTeams)) {
+        missionIdToSuspectedAllyTeams[lastMissionId] = [];
+      }
+      missionIdToSuspectedAllyTeams[lastMissionId].push(allyTeam.id);
+    }
+  });
 };
 
 const calculateTheaterLevelAdjustments = () => {
@@ -539,6 +566,7 @@ const loadData = async () => {
   calculateSuspectedSpawns();
   calculateTheaterLevelAdjustments();
   calculateDefDrillTeamLevels();
+  calculateSuspectedAllyTeams();
 
   trans();
   $("#loadtips").hide();
@@ -2060,6 +2088,38 @@ function missiondisplay(userealce = false){
           .join('');
     }
 
+	if (missionId in missionIdToSuspectedAllyTeams) {
+	  output += `<tr><td colspan="8" class="mission-spawn-separator">${UI_TEXT["team_suspected_ally"]} </td></tr>`
+		+ missionIdToSuspectedAllyTeams[missionId].map((allyTeamId) => {
+			const spotAllyTeam = Ally_team.find(t => t.id == allyTeamId);
+			if (!spotAllyTeam || spotAllyTeam.initial_type !== 1) return '';
+
+			const controllableAllyTeamRegexMatch = spotAllyTeam.enemy_team_id
+			  ? spotAllyTeam.ai.match(controllableAllyTeamRegex)
+			  : null;
+
+			let enemyTeamId = null;
+			let controllableAllyTeamInfo = null;
+
+			if (controllableAllyTeamRegexMatch) {
+			  enemyTeamId = spotAllyTeam.enemy_team_id;
+			  controllableAllyTeamInfo = {
+				canWithdraw: controllableAllyTeamRegexMatch[1] == "1",
+				canQuickFix: controllableAllyTeamRegexMatch[2] == "1",
+				canSupply: controllableAllyTeamRegexMatch[3] != "0",
+				initialAmmo: Number(controllableAllyTeamRegexMatch[4]),
+				initialMre: Number(controllableAllyTeamRegexMatch[5]),
+			  };
+			} else if (spotAllyTeam.enemy_team_id) {
+			  enemyTeamId = spotAllyTeam.enemy_team_id;
+			}
+
+			if (!enemyTeamId && !spotAllyTeam.guns && !spotAllyTeam.sangvis) return '';
+
+			return generateEnemyTeamRow(null, enemyTeamId ?? 0, spotAllyTeam, controllableAllyTeamInfo, userealce);
+		  }).join('');
+	}
+	
     output += `</tbody></table>`;
 
     $("#missionshow").html(output);

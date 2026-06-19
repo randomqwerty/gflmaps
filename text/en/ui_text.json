@@ -190,6 +190,7 @@
   "team_other": "Other",
   "team_drops": "Rare Drops",
   "team_suspected_spawns": "Suspected Spawns",
+  "team_suspected_ally": "Suspected NPCs",
 
   "target_id": "Target Team ID",
   "target_name": "Name",
